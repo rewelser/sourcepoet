@@ -1,0 +1,318 @@
+---
+// PerlishPointClouds.astro
+
+export interface Props {
+    foregroundColor?: string;
+    backgroundColor?: string;
+    /** max probability at noise peaks, 0..1 (brightest parts) */
+    maxProbabilityPeak?: number;
+    /** min probability at noise peaks, 0..1 (shoulder of blobs) */
+    minProbabilityPeak?: number;
+    /** max probability at noise troughs, 0..1 (darkest parts) */
+    maxProbabilityTrough?: number;
+    /** how fast the noise field morphs */
+    fieldSpeed?: number;
+    /** scale of the noise field (smaller = bigger blobs) */
+    noiseScale?: number;
+    className?: string;
+    width?: number | string;
+    height?: number | string;
+}
+
+const {
+    foregroundColor = "#1e90ff",
+    backgroundColor = "#000000",
+    maxProbabilityPeak = 0.8,
+    minProbabilityPeak = 0.4,
+    maxProbabilityTrough = 0.02,
+    fieldSpeed = 0.15,
+    noiseScale = 2.5,
+    className,
+    width = "100%",
+    height = "100%",
+} = Astro.props;
+
+const cssWidth = typeof width === "number" ? `${width}px` : width;
+const cssHeight = typeof height === "number" ? `${height}px` : height;
+---
+
+<div
+        data-perlish-point-clouds
+        data-foreground-color={foregroundColor}
+        data-background-color={backgroundColor}
+        data-max-probability-peak={maxProbabilityPeak}
+        data-min-probability-peak={minProbabilityPeak}
+        data-max-probability-trough={maxProbabilityTrough}
+        data-field-speed={fieldSpeed}
+        data-noise-scale={noiseScale}
+        data-fixed-width={typeof width === "number" ? width : undefined}
+        data-fixed-height={typeof height === "number" ? height : undefined}
+        class={className}
+        style={`width:${cssWidth};height:${cssHeight};display:block;position:relative;`}
+></div>
+
+<script>
+    import * as THREE from "three";
+    import vertexShader from "../domain/threejs/shaders/perlish.vert.glsl?raw";
+    import fragmentShader from "../domain/threejs/shaders/perlish.frag.glsl?raw";
+
+    const selector = "[data-perlish-point-clouds]";
+
+    function initPerlishPointClouds(container: HTMLElement) {
+        // Prevent duplicate initialization, including with Astro page transitions.
+        if (container.dataset.perlishInitialized === "true") {
+            return;
+        }
+
+        container.dataset.perlishInitialized = "true";
+
+        const readNumber = (
+            value: string | undefined,
+            fallback: number,
+        ): number => {
+            const parsed = Number(value);
+            return Number.isFinite(parsed) ? parsed : fallback;
+        };
+
+        const foregroundColor =
+            container.dataset.foregroundColor ?? "#1e90ff";
+
+        const backgroundColor =
+            container.dataset.backgroundColor ?? "#000000";
+
+        const maxProbabilityPeak = readNumber(
+            container.dataset.maxProbabilityPeak,
+            0.8,
+        );
+
+        const minProbabilityPeak = readNumber(
+            container.dataset.minProbabilityPeak,
+            0.4,
+        );
+
+        const maxProbabilityTrough = readNumber(
+            container.dataset.maxProbabilityTrough,
+            0.02,
+        );
+
+        const fieldSpeed = readNumber(
+            container.dataset.fieldSpeed,
+            0.15,
+        );
+
+        const noiseScale = readNumber(
+            container.dataset.noiseScale,
+            2.5,
+        );
+
+        const fixedWidth = container.dataset.fixedWidth
+            ? Number(container.dataset.fixedWidth)
+            : undefined;
+
+        const fixedHeight = container.dataset.fixedHeight
+            ? Number(container.dataset.fixedHeight)
+            : undefined;
+
+        const makeColorVec3 = (hex: string) => {
+            const color = new THREE.Color(hex);
+
+            return new THREE.Vector3(
+                color.r,
+                color.g,
+                color.b,
+            );
+        };
+
+        // Renderer
+        const renderer = new THREE.WebGLRenderer({
+            antialias: false,
+        });
+
+        renderer.outputColorSpace = THREE.SRGBColorSpace;
+
+        container.appendChild(renderer.domElement);
+
+        // Scene + camera + fullscreen quad
+        const scene = new THREE.Scene();
+
+        const camera = new THREE.OrthographicCamera(
+            -1,
+            1,
+            1,
+            -1,
+            0,
+            1,
+        );
+
+        const geometry = new THREE.PlaneGeometry(2, 2);
+
+        const material = new THREE.ShaderMaterial({
+            uniforms: {
+                time: {
+                    value: 0.0,
+                },
+                resolution: {
+                    value: new THREE.Vector2(1, 1),
+                },
+                foreground: {
+                    value: makeColorVec3(foregroundColor),
+                },
+                background: {
+                    value: makeColorVec3(backgroundColor),
+                },
+                maxProbPeak: {
+                    value: maxProbabilityPeak,
+                },
+                minProbPeak: {
+                    value: minProbabilityPeak,
+                },
+                maxProbTrough: {
+                    value: maxProbabilityTrough,
+                },
+                fieldSpeed: {
+                    value: fieldSpeed,
+                },
+                noiseScale: {
+                    value: noiseScale,
+                },
+            },
+
+            vertexShader: vertexShader,
+
+            fragmentShader: fragmentShader,
+        });
+
+        material.toneMapped = false;
+
+        const mesh = new THREE.Mesh(
+            geometry,
+            material,
+        );
+
+        scene.add(mesh);
+
+        const resize = () => {
+            const width =
+                (fixedWidth ??
+                    container.clientWidth) ||
+                window.innerWidth;
+
+            const height =
+                (fixedHeight ??
+                    container.clientHeight) ||
+                window.innerHeight;
+
+            renderer.setPixelRatio(
+                window.devicePixelRatio || 1,
+            );
+
+            // Increase this to 2 or 3 if you want
+            // a higher-resolution internal render.
+            const scale = 1;
+
+            renderer.setSize(
+                width * scale,
+                height * scale,
+                false,
+            );
+
+            // Keep the canvas at the normal CSS size.
+            renderer.domElement.style.width =
+                `${width}px`;
+
+            renderer.domElement.style.height =
+                `${height}px`;
+
+            renderer.domElement.style.imageRendering =
+                "pixelated";
+
+            // Use the actual drawing-buffer dimensions,
+            // including devicePixelRatio.
+            material.uniforms.resolution.value.set(
+                renderer.domElement.width,
+                renderer.domElement.height,
+            );
+        };
+
+        resize();
+
+        window.addEventListener(
+            "resize",
+            resize,
+        );
+
+        const start = performance.now();
+
+        const animate = (now: number) => {
+            const elapsed =
+                (now - start) / 1000;
+
+            material.uniforms.time.value =
+                elapsed;
+
+            renderer.render(
+                scene,
+                camera,
+            );
+        };
+
+        renderer.setAnimationLoop(
+            animate,
+        );
+
+        const cleanup = () => {
+            window.removeEventListener(
+                "resize",
+                resize,
+            );
+
+            renderer.setAnimationLoop(
+                null,
+            );
+
+            geometry.dispose();
+            material.dispose();
+            renderer.dispose();
+
+            mesh.removeFromParent();
+
+            if (
+                renderer.domElement.parentNode ===
+                container
+            ) {
+                container.removeChild(
+                    renderer.domElement,
+                );
+            }
+
+            delete container.dataset.perlishInitialized;
+        };
+
+        // Important if you're using Astro's client router /
+        // View Transitions.
+        document.addEventListener(
+            "astro:before-swap",
+            cleanup,
+            {once: true},
+        );
+    }
+
+    function initAllPerlishPointClouds() {
+        document
+            .querySelectorAll<HTMLElement>(
+                selector,
+            )
+            .forEach(
+                initPerlishPointClouds,
+            );
+    }
+
+    // Standard page load.
+    initAllPerlishPointClouds();
+
+    // Supports pages loaded through Astro's client router.
+    document.addEventListener(
+        "astro:page-load",
+        initAllPerlishPointClouds,
+    );
+</script>

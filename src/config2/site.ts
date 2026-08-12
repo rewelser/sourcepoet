@@ -1,0 +1,33 @@
+import siteLogo from "./assets/genericlogo.svg";
+import bookingHeroPhoto from "./assets/default-booking-photo.jpg";
+import personProfilePicture from "./assets/default-booking-profile.jpg";
+import personRunwayPhoto from "./assets/default-runway-photo.svg";
+import errorGraphic404 from "./assets/404.webp";
+
+export const defaults = {
+    siteName: "Company Name",
+    siteUrl: "https://www.example.com/",
+    siteLogo,
+    personProfilePicture,
+    personRunwayPhoto,
+    bookingHeroPhoto,
+    bookingHeroPhotoAltText: "Company Booking photo",
+    ogPhoto: "/default_media/ogimages/generic-og-image.jpg",
+    address: {
+        streetAddress: "123 Main St",
+        addressLocality: "Anytown",
+        addressRegion: "VA",
+        postalCode: "00000",
+        addressCountry: "US",
+    },
+    siteTimeZone: "America/New_York",
+    sitePhone: "(555) 555-5555",
+    siteEmail: "info@company.com",
+    hoursShortline: "12a to 8p | Tuesday - Sunday\nClosed Monday",
+    placeId: "ChIJvcRSeifOUIgRg4YB5KITZ90"
+
+}
+
+export const error = {
+    errorGraphic404
+}

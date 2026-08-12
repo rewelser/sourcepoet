@@ -1,0 +1,35 @@
+@import "tailwindcss";
+
+@view-transition {
+    navigation: auto;
+}
+
+:root {
+    --promo-bar-h: 0px;
+    --desktop-menu-h: 0px;
+    --mobile-menu-h: 0px;
+    --promo-bar-duration: 260ms;
+    --menu-announcement-h: calc(max(var(--desktop-menu-h), var(--mobile-menu-h)) + var(--promo-bar-h) + 1px);
+    --fixed-booking-button-h: 0px;
+    --fade-in-transition: opacity 300ms ease-in-out;
+    --fade-in-animation: fade-in 500ms ease;
+
+    --transition-focus: --focus-gap-spread 120ms ease,
+    --focus-gap-color 120ms ease,
+    outline-color 120ms ease,
+    outline-offset 120ms ease;
+
+    --transition-decorative: --element-shadow-x 300ms ease,
+    --element-shadow-y 300ms ease,
+    --element-shadow-color 300ms ease,
+    background-color 300ms ease,
+    color 300ms ease;
+}
+
+
+@keyframes fade-in {
+    from {
+        opacity: 0;
+    }
+}
+

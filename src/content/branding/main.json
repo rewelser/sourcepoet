@@ -1,0 +1,15 @@
+{
+  "logoDark": "assets/images/blutattoo-trimmed-black.svg",
+  "logoLight": "assets/images/blutattoo-trimmed-light(orange100-fdecd8).svg",
+  "sitewideOGPhoto": "/uploads/ogimages/blutattoo_sitewide_og.jpg",
+  "hero": {
+    "video": {
+      "videoMobile": "/uploads/misc_videos/hero-mobile.webm",
+      "videoDesktop": "/uploads/misc_videos/hero_desktop.webm",
+      "posterMobile": "assets/images/hero_poster_mobile.jpg",
+      "posterDesktop": "assets/images/hero_poster_desktop.jpg"
+    },
+    "bookingHeroPhoto": "assets/images/DSC02546-2.jpg",
+    "bookingHeroPhotoAltText": "BluTattoo group photo"
+  }
+}

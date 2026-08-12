@@ -12,6 +12,13 @@
     "astro": "astro"
   },
   "dependencies": {
-    "astro": "^7.2.1"
+    "@sveltia/cms": "^0.188.0",
+    "@tailwindcss/vite": "^4.3.3",
+    "astro": "^7.2.1",
+    "tailwindcss": "^4.3.3",
+    "three": "^0.185.1"
+  },
+  "devDependencies": {
+    "@types/three": "^0.185.4"
   }
 }

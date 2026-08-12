@@ -1,0 +1,86 @@
+---
+import {getEntry} from "astro:content";
+import "../styles/global.css";
+import {defaults} from "../config/site";
+// import ShareMeta from "../components/ShareMeta.astro";
+const branding = await getEntry("branding", "main");
+import spectral400Url from "@fontsource/spectral/files/spectral-latin-400-normal.woff2?url";
+
+// import "@fontsource/spectral";
+// import "@fontsource/spectral/400.css";
+// import "@fontsource/spectral/500.css";
+// import "@fontsource/spectral/600.css";
+// import "@fontsource/spectral/700.css";
+// import "@fontsource/spectral/800.css";
+// import AnalyticsTags from "../components/analytics/AnalyticsTags.astro";
+
+const site = await getEntry("siteInfo", "main");
+const siteName = site?.data?.siteName ?? defaults.siteName;
+const sitewideOgImage = branding?.data.sitewideOGPhoto;
+const fallbackOgImage = defaults.ogPhoto;
+
+const {
+    title: pageTitle,
+    description: pageDescription,
+    ogImage,
+    preloadImage,
+    bodyClass = "",
+    bodyStyle = "",
+    htmlLang = "en",
+} = Astro.props;
+
+const pageTitleUsed = pageTitle ? `${pageTitle} | ${siteName}` : siteName;
+const pageDescriptionUsed = pageDescription ? pageDescription : siteName;
+const ogImageUsed =
+    ogImage ??
+    sitewideOgImage ??
+    fallbackOgImage;
+const siteUrl = Astro.site ?? Astro.url.origin;
+const canonical = new URL(Astro.url.pathname, siteUrl).toString();
+const isNoIndex = import.meta.env.PUBLIC_NOINDEX === "true";
+---
+
+<!doctype html>
+<html lang={htmlLang} style="overscroll-behavior-x: none;">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+    <!--<AnalyticsTags isNoIndex={isNoIndex} server:defer></AnalyticsTags>-->
+
+    <title>{pageTitleUsed}</title>
+    <!-- <meta name="theme-color" content="#161b22" media="(prefers-color-scheme: dark)"> -->
+    <meta name="description" content={pageDescriptionUsed}/>
+    <link rel="canonical" href={canonical}/>
+
+    {isNoIndex && (
+            <meta name="robots" content="noindex, nofollow"/>
+    )}
+
+
+    <!--<link rel="icon" href="/favicon.ico" type="image/x-icon">-->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg"/>
+    <link rel="icon" href="/favicon.ico" type="image/x-icon"/>
+    <link rel="sitemap" href="/sitemap-index.xml"/>
+    <!--<ShareMeta-->
+    <!--        title={pageTitleUsed}-->
+    <!--        description={pageDescriptionUsed}-->
+    <!--        canonical={canonical}-->
+    <!--        ogImage={ogImageUsed}-->
+    <!--/>-->
+    {preloadImage &&
+            <link rel="preload" as="image" href={preloadImage}/>}
+    <!--<link-->
+    <!--        rel="preload"-->
+    <!--        href={spectral400Url}-->
+    <!--        as="font"-->
+    <!--        type="font/woff2"-->
+    <!--        crossorigin-->
+    <!--/>-->
+    <slot name="head"/>
+</head>
+<body class={`${bodyClass} margin-0`} style={bodyStyle}>
+<slot/>
+<!--<script src="../domain/analytics/analytics-events.ts"></script>-->
+</body>
+</html>

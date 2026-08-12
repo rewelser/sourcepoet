@@ -1,0 +1,40 @@
+---
+import {
+    title,
+} from "virtual:sourcepoet-sveltia/config";
+---
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+
+    <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1"
+    />
+
+    <meta
+            name="robots"
+            content="noindex"
+    />
+
+    <title>{title}</title>
+</head>
+
+<body>
+<script>
+    import {
+        init,
+    } from "@sveltia/cms";
+
+    import {
+        config,
+    } from "virtual:sourcepoet-sveltia/config";
+
+    init({
+        config,
+    });
+</script>
+</body>
+</html>
