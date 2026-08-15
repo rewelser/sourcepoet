@@ -1,5 +1,6 @@
-import type { APIRoute } from "astro";
-import { getSecret } from "astro:env/server";
+import type {APIRoute} from "astro";
+import {getSecret} from "astro:env/server";
+import {githubOAuth} from "virtual:sourcepoet-sveltia/config";
 
 export const prerender = false;
 
@@ -9,32 +10,29 @@ interface GitHubTokenResponse {
     scope?: string;
     error?: string;
     error_description?: string;
+    error_uri?: string;
 }
 
-export const GET: APIRoute = async ({ url, cookies }) => {
-    const clientId = getSecret("GITHUB_OAUTH_CLIENT_ID");
-    const clientSecret = getSecret("GITHUB_OAUTH_CLIENT_SECRET");
+export const GET: APIRoute = async ({url, cookies}) => {
+    const clientId = getSecret(githubOAuth.clientIdEnv);
+    const clientSecret = getSecret(githubOAuth.clientSecretEnv);
 
     if (!clientId || !clientSecret) {
         return new Response(
             "Missing GitHub OAuth credentials.",
-            { status: 500 },
+            {status: 500},
         );
     }
 
     const code = url.searchParams.get("code");
     const returnedState = url.searchParams.get("state");
-    const expectedState =
-        cookies.get("sveltia_oauth_state")?.value;
-
-    cookies.delete("sveltia_oauth_state", {
-        path: "/",
-    });
+    const expectedState = cookies.get("sveltia_oauth_state")?.value;
+    const codeVerifier = cookies.get("sveltia_oauth_pkce")?.value;
 
     if (!code) {
         return new Response(
             "Missing GitHub OAuth authorization code.",
-            { status: 400 },
+            {status: 400},
         );
     }
 
@@ -45,68 +43,121 @@ export const GET: APIRoute = async ({ url, cookies }) => {
     ) {
         return new Response(
             "Invalid GitHub OAuth state.",
-            { status: 400 },
+            {status: 400},
         );
     }
 
+    if (!codeVerifier) {
+        return new Response(
+            "Missing OAuth PKCE verifier.",
+            {status: 400},
+        );
+    }
+
+    cookies.delete("sveltia_oauth_state", {path: "/"});
+    cookies.delete("sveltia_oauth_pkce", {path: "/"});
+
     const callbackUrl = new URL(
-        "/oauth/callback",
+        githubOAuth.callbackPath,
         url.origin,
     );
 
-    const response = await fetch(
-        "https://github.com/login/oauth/access_token",
-        {
-            method: "POST",
+    let response: Response;
 
-            headers: {
-                Accept: "application/json",
-                "Content-Type":
-                    "application/x-www-form-urlencoded",
+    try {
+        response = await fetch(
+            "https://github.com/login/oauth/access_token",
+            {
+                method: "POST",
+
+                headers: {
+                    Accept: "application/json",
+                    "Content-Type":
+                        "application/x-www-form-urlencoded",
+                },
+
+                body: new URLSearchParams({
+                    client_id: clientId,
+                    client_secret: clientSecret,
+                    code,
+                    redirect_uri: callbackUrl.toString(),
+                    code_verifier: `${codeVerifier}wrong`,
+                }),
             },
-
-            body: new URLSearchParams({
-                client_id: clientId,
-                client_secret: clientSecret,
-                code,
-                redirect_uri: callbackUrl.toString(),
-            }),
-        },
-    );
-
-    if (!response.ok) {
+        );
+    } catch (error) {
         console.error(
-            "GitHub OAuth token request failed:",
-            response.status,
-            await response.text(),
+            "[sveltia-oauth] GitHub token request failed:",
+            error,
         );
 
         return new Response(
-            "GitHub OAuth token request failed.",
-            { status: 502 },
+            "Unable to contact GitHub OAuth.",
+            {status: 502},
         );
     }
 
-    const body =
-        await response.json() as GitHubTokenResponse;
+    const body = await response.json() as GitHubTokenResponse;
+
+    if (!response.ok) {
+        console.error(
+            "[sveltia-oauth] GitHub rejected token exchange:",
+            {
+                status: response.status,
+                error: body.error,
+                errorDescription:
+                body.error_description,
+                errorUri:
+                body.error_uri,
+            },
+        );
+
+        const isOAuthRejection =
+            response.status === 400;
+
+        return new Response(
+            isOAuthRejection
+                ? "GitHub OAuth authorization failed."
+                : "GitHub OAuth token request failed.",
+            {
+                status:
+                    isOAuthRejection
+                        ? 400
+                        : 502,
+            },
+        );
+    }
 
     if (body.error) {
         console.error(
-            "GitHub OAuth error:",
-            body.error,
-            body.error_description,
+            "[sveltia-oauth] GitHub OAuth error:",
+            {
+                error:
+                body.error,
+
+                errorDescription:
+                body.error_description,
+
+                errorUri:
+                body.error_uri,
+            },
         );
 
         return new Response(
             "GitHub OAuth authorization failed.",
-            { status: 400 },
+            {status: 400},
         );
     }
 
     if (!body.access_token) {
+        console.error(
+            "[sveltia-oauth] GitHub token response did not contain an access token.",
+            {status: response.status},
+        );
+
         return new Response(
             "GitHub did not return an access token.",
-            { status: 502 },
+            {status: 502},
         );
     }
 
@@ -115,8 +166,7 @@ export const GET: APIRoute = async ({ url, cookies }) => {
         provider: "github",
     };
 
-    const authorizationMessage =
-        `authorization:github:success:${JSON.stringify(content)}`;
+    const authorizationMessage = `authorization:github:success:${JSON.stringify(content)}`;
 
     const origin = url.origin;
 

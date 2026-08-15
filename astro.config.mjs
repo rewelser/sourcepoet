@@ -13,6 +13,8 @@ export default defineConfig({
   integrations: [
     sveltiaIntegration({
       config: cmsConfig,
+      // configPath: "public/admin/config.yml",
+      githubOAuth: false,
     }),
   ],
   vite: {

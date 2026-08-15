@@ -1,0 +1,31 @@
+name: Sourcepoet
+theme: dark
+logo: /uploads/logo.png
+
+identity:
+  displayName: Sourcepoet
+  tagline: Words worth keeping
+
+socials:
+  - platform: github
+    url: https://github.com/rewelser
+
+  - platform: instagram
+    url: https://instagram.com/example
+keywords:
+  - poetry
+  - literature
+  - essays
+blocks:
+  - type: heading
+    text: Hello World
+    level: h2
+
+  - type: paragraph
+    text: This is some body copy.
+priority: 3
+identifier: df733d7e-d2f7-4e4f-8f27-803046b64040
+
+metadata:
+  category: literature
+  status: active

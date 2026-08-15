@@ -1,14 +1,21 @@
 import {defineCollection, reference, z} from "astro:content";
 import {glob} from 'astro/loaders';
-import {
-    emptyStrToUndef,
-    optionalString,
-    optionalText
-} from "./domain/base/schema.ts";
+// import {
+//     emptyStrToUndef,
+//     optionalString,
+//     optionalText
+// } from "./domain/base/schema.ts";
 // import {contactSocialsBookingSchema, siteInfoSocialsSchema} from "./domain/contact/schema.ts";
 // import {frameSchema, videoSchema} from "./domain/decor/schema.ts";
 // import {primaryRoleSchema} from "./domain/people/schema.ts";
 // import {isoDate, recurrenceRuleSchema, timeHM, toHm, weekdayEnum} from "./domain/events/schema.ts";
+
+
+
+import {
+    sveltiaLoader,
+} from "./integrations/sveltia/loader";
+
 
 // /*** region *** Events Collection ****/
 //
@@ -135,53 +142,82 @@ const faqs = defineCollection({
 //     }),
 // });
 
-const policies = defineCollection({
-    loader: glob({
-        base: "./src/content/siteInfo",
-        pattern: "assets/policies/**/*.{md,mdx}",
-        generateId: ({entry}) =>
-            entry.replaceAll("\\", "/"),
-    }),
-});
-
-const siteInfo = defineCollection({
-    loader: glob({pattern: "**/*.{json,yaml,yml,toml}", base: "./src/content/siteInfo"}),
-    schema: z.object({
-        siteName: z.string(),
-        siteUrl: z.string().url(),
-        address: z.object({
-            streetAddress: z.string(),
-            addressLocality: z.string(),
-            addressRegion: z.string().length(2),
-            postalCode: z.string(),
-            addressCountry: z.string().length(2).default("US"),
-            placeId: z.string(),
-        }),
-        timeZone: z.string().default("America/New_York"),
-        phone: z.preprocess(emptyStrToUndef, z.string().optional()),
-        email: z.preprocess(emptyStrToUndef, z.string().optional()),
-        hours: z.array(z.object({label: z.string(), value: z.string()})).optional(),
-        hoursShortline: z.string(),
-        socials: siteInfoSocialsSchema,
-        // privacyPolicy: z.string().optional(),
-        privacyPolicy: z.preprocess(emptyStrToUndef, reference("policies").optional()),
-    }),
-});
+// const policies = defineCollection({
+//     loader: glob({
+//         base: "./src/content/siteInfo",
+//         pattern: "assets/policies/**/*.{md,mdx}",
+//         generateId: ({entry}) =>
+//             entry.replaceAll("\\", "/"),
+//     }),
+// });
+//
+// const siteInfo = defineCollection({
+//     loader: glob({pattern: "**/*.{json,yaml,yml,toml}", base: "./src/content/siteInfo"}),
+//     schema: z.object({
+//         siteName: z.string(),
+//         siteUrl: z.string().url(),
+//         address: z.object({
+//             streetAddress: z.string(),
+//             addressLocality: z.string(),
+//             addressRegion: z.string().length(2),
+//             postalCode: z.string(),
+//             addressCountry: z.string().length(2).default("US"),
+//             placeId: z.string(),
+//         }),
+//         timeZone: z.string().default("America/New_York"),
+//         phone: z.preprocess(emptyStrToUndef, z.string().optional()),
+//         email: z.preprocess(emptyStrToUndef, z.string().optional()),
+//         hours: z.array(z.object({label: z.string(), value: z.string()})).optional(),
+//         hoursShortline: z.string(),
+//         socials: siteInfoSocialsSchema,
+//         // privacyPolicy: z.string().optional(),
+//         privacyPolicy: z.preprocess(emptyStrToUndef, reference("policies").optional()),
+//     }),
+// });
 
 /*** endregion ***/
 
 /*** region *** Branding Collection ****/
 
-const branding = defineCollection({
-    loader: glob({pattern: "**/*.{json,yaml,yml,toml}", base: "./src/content/branding"}),
-    schema: ({image}) =>
-        z.object({
-            logoDark: image(),
-            logoLight: image(),
-            sitewideOGPhoto: z.string(),
-        }),
-});
+// const branding = defineCollection({
+//     loader: glob({pattern: "**/*.{json,yaml,yml,toml}", base: "./src/content/branding"}),
+//     schema: ({image}) =>
+//         z.object({
+//             logoDark: image(),
+//             logoLight: image(),
+//             sitewideOGPhoto: z.string(),
+//         }),
+// });
 
 /*** endregion ***/
 
-export const collections = {faqSections, faqs, policies, siteInfo, aftercare, events, branding}; // & home?
+
+const posts = defineCollection({
+    loader: sveltiaLoader("posts"),
+});
+
+const siteSettings = defineCollection({
+    loader: sveltiaLoader({
+        collection: "settings",
+        file: "site",
+    }),
+});
+
+const branding = defineCollection({
+    loader: sveltiaLoader({singleton: "branding"})
+});
+
+const authors = defineCollection({
+    loader:
+        sveltiaLoader("authors"),
+});
+
+const navigation =
+    defineCollection({
+        loader: sveltiaLoader({
+            singleton: "navigation",
+        }),
+    });
+
+// export const collections = {faqSections, faqs, policies, siteInfo, aftercare, posts, branding}; // & home?
+export const collections = {posts, siteSettings, branding, authors, navigation}; // & home?

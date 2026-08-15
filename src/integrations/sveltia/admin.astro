@@ -1,13 +1,15 @@
 ---
 import {
     title,
+    config,
+    githubOAuth,
 } from "virtual:sourcepoet-sveltia/config";
 ---
 
 <!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
+    <meta charset="UTF-8"/>
 
     <meta
             name="viewport"
@@ -24,17 +26,23 @@ import {
 
 <body>
 <script>
-    import {
-        init,
-    } from "@sveltia/cms";
+    import { init } from "@sveltia/cms";
 
-    import {
-        config,
-    } from "virtual:sourcepoet-sveltia/config";
+        import {
+            config,
+            githubOAuth,
+            } from "virtual:sourcepoet-sveltia/config";
 
-    init({
-        config,
-    });
+        const runtimeConfig = structuredClone(config);
+
+        if (githubOAuth.enabled && runtimeConfig.backend?.name === "github") {
+            runtimeConfig.backend.base_url = window.location.origin;
+            runtimeConfig.backend.auth_endpoint = githubOAuth.authEndpoint;
+            }
+
+        init({
+            config: runtimeConfig,
+            });
 </script>
 </body>
 </html>
