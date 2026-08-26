@@ -13,9 +13,9 @@
   },
   "dependencies": {
     "@astrojs/check": "^0.9.10",
+    "@sourcepoetry/astro-sveltia": "^0.1.0",
     "@tailwindcss/vite": "^4.3.3",
     "astro": "^7.2.1",
-    "@sourcepoetry/astro-sveltia": "^0.0.0",
     "tailwindcss": "^4.3.3",
     "three": "^0.185.1",
     "typescript": "^6.0.3"
@@ -23,8 +23,5 @@
   "devDependencies": {
     "@types/node": "^26.2.0",
     "@types/three": "^0.185.4"
-  },
-  "workspaces": [
-    "packages/*"
-  ]
+  }
 }
