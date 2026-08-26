@@ -1,6 +1,6 @@
-import type {CmsConfig} from "@sveltia/cms";
+import {defineCmsConfig} from "@sourcepoetry/astro-sveltia";
 
-export const cmsConfig = {
+export const cmsConfig = defineCmsConfig({
     backend: {
         name: "github",
         repo: "rewelser/sourcepoet",
@@ -15,7 +15,13 @@ export const cmsConfig = {
             name: "posts",
             label: "Posts",
             folder: "src/content/posts",
-            body_field: {key: "content"},
+
+            astro: {
+                pattern: "**/*.md",
+                image: "local",
+                bodyMode: "document",
+                bodyField: "content",
+            },
 
             path: "{{slug}}/index",
 
@@ -58,29 +64,81 @@ export const cmsConfig = {
             ],
         },
         {
-            name: "settings",
-            label: "Settings",
+            name: "site",
+            label: "Site",
+
+            astro: {
+                image: "local",
+            },
 
             files: [
                 {
-                    name: "site",
-                    label: "Site Settings",
-                    file: "src/content/settings/site.yaml",
+                    name: "about",
+                    label: "About",
+                    file: "src/content/site/about.yaml",
+
+                    fields: [
+                        {
+                            name: "title",
+                            label: "Title",
+                            widget: "string",
+                        },
+                        {
+                            name: "description",
+                            label: "Description",
+                            widget: "text",
+                        },
+                    ],
+                },
+
+                {
+                    name: "contact",
+                    label: "Contact",
+                    file: "src/content/site/contact.yaml",
+
+                    fields: [
+                        {
+                            name: "email",
+                            label: "Email",
+                            widget: "string",
+                        },
+                        {
+                            name: "phone",
+                            label: "Phone",
+                            widget: "string",
+                        },
+                    ],
+                },
+
+                {
+                    name: "settings",
+                    label: "Settings",
+                    file: "src/content/site/settings.yaml",
 
                     fields: [
                         {
                             name: "siteName",
                             label: "Site Name",
                             widget: "string",
-                        }
-                    ]
-                }
-            ]
+                        },
+                        {
+                            name: "environment",
+                            label: "Environment",
+                            widget: "select",
+                            options: ["development", "production"],
+                        },
+                    ],
+                },
+            ],
         },
         {
             name: "authors",
             label: "Authors",
             folder: "src/content/authors",
+
+            astro: {
+                pattern: "**/*.md",
+            },
 
             fields: [
                 {
@@ -97,6 +155,10 @@ export const cmsConfig = {
             name: "branding",
             label: "Branding",
             file: "src/content/branding/main.yaml",
+
+            astro: {
+                image: "local",
+            },
 
             fields: [
                 {
@@ -270,4 +332,4 @@ export const cmsConfig = {
             ],
         },
     ]
-} satisfies CmsConfig;
+});

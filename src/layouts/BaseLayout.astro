@@ -14,9 +14,9 @@ import spectral400Url from "@fontsource/spectral/files/spectral-latin-400-normal
 // import "@fontsource/spectral/800.css";
 // import AnalyticsTags from "../components/analytics/AnalyticsTags.astro";
 
-const site = await getEntry("siteInfo", "main");
-const siteName = site?.data?.siteName ?? defaults.siteName;
-const sitewideOgImage = branding?.data.sitewideOGPhoto;
+// const site = await getEntry("siteInfo", "main");
+// const siteName = site?.data?.siteName ?? defaults.siteName;
+// const sitewideOgImage = branding?.data.sitewideOGPhoto;
 const fallbackOgImage = defaults.ogPhoto;
 
 const {
@@ -29,12 +29,12 @@ const {
     htmlLang = "en",
 } = Astro.props;
 
-const pageTitleUsed = pageTitle ? `${pageTitle} | ${siteName}` : siteName;
-const pageDescriptionUsed = pageDescription ? pageDescription : siteName;
-const ogImageUsed =
-    ogImage ??
-    sitewideOgImage ??
-    fallbackOgImage;
+// const pageTitleUsed = pageTitle ? `${pageTitle} | ${siteName}` : siteName;
+// const pageDescriptionUsed = pageDescription ? pageDescription : siteName;
+// const ogImageUsed =
+//     ogImage ??
+//     sitewideOgImage ??
+//     fallbackOgImage;
 const siteUrl = Astro.site ?? Astro.url.origin;
 const canonical = new URL(Astro.url.pathname, siteUrl).toString();
 const isNoIndex = import.meta.env.PUBLIC_NOINDEX === "true";
@@ -48,9 +48,9 @@ const isNoIndex = import.meta.env.PUBLIC_NOINDEX === "true";
 
     <!--<AnalyticsTags isNoIndex={isNoIndex} server:defer></AnalyticsTags>-->
 
-    <title>{pageTitleUsed}</title>
+    <!--<title>{pageTitleUsed}</title>-->
     <!-- <meta name="theme-color" content="#161b22" media="(prefers-color-scheme: dark)"> -->
-    <meta name="description" content={pageDescriptionUsed}/>
+    <!--<meta name="description" content={pageDescriptionUsed}/>-->
     <link rel="canonical" href={canonical}/>
 
     {isNoIndex && (

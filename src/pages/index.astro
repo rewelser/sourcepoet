@@ -7,38 +7,71 @@ import logo from "/src/config/assets/sourcepoet_transparent.png";
 import paperbg from "/src/config/assets/paperbg.webp";
 import {Image} from "astro:assets";
 import FadeInImage from "../components/FadeInImage.astro";
-import {getCollection, getEntry} from "astro:content";
+import {getEntry} from "astro:content";
 
 
-
-const post =
-    await getEntry("posts", "test");
-
-if (!post) {
-    throw new Error(
-        'Test post was not found.',
-    );
-}
-
-console.log(
-    "[queried post]",
-    post,
-);
-
-console.log(
-    "[queried hero]",
-    post.data.hero,
-);
+// const post = await getEntry("runtimePosts", "test");
 
 
 import type { ImageMetadata } from "astro";
 
 
-if (post) {
-    const hero: ImageMetadata =
-        post.data.hero;
+// const post = await getEntry("runtimePosts", "test");
+//
+// if (!post) throw new Error("runtimePosts/test was not found.");
+//
+// const title: string = post.data.title;
+// const hero: ImageMetadata = post.data.hero;
+//
+// const author: {
+//     collection: "authors";
+//     id: string;
+//     } = post.data.author;
+
+
+// const post = await getEntry("cmsPosts", "test");
+//
+// const site = await getEntry("cmsSettings", "site");
+//
+//
+// const navigation = await getEntry("cmsNavigation", "main");
+//
+// if (!navigation) {
+//     throw new Error("Navigation was not found.");
+// }
+//
+// console.log(navigation.data);
+//
+//
+// const rootKeyvalue = await getEntry("cmsRootKeyvalue", "main");
+//
+// if (!rootKeyvalue) {
+//     throw new Error("Root keyvalue test was not found.");
+// }
+//
+// const links: Record<string, string> = rootKeyvalue.data;
+//
+// console.log("[root keyvalue]", rootKeyvalue.data);
+// rootKeyvalue.data.links;
+
+import {cmsConfig} from "../cms/config";
+import {getCmsFileEntry} from "@sourcepoetry/astro-sveltia/content";
+
+const site = await getCmsFileEntry(cmsConfig,"site", "settings");
+
+if (!site) {
+    throw new Error("Site settings were not found.");
 }
 
+const siteName: string = site.data.siteName;
+
+// getEntry("posts", "test");
+// getEntry("site", "about");
+// getEntry("site", "contact");
+// getEntry("site", "settings");
+// getEntry("branding", "main");
+// getEntry("navigation", "main");
+// getCmsFileEntry("site", "about");
 ---
 
 <Layout>
@@ -50,10 +83,6 @@ if (post) {
             </h1>
         </div>
     </section>
-    <Image
-            src={post.data.hero}
-            alt="Test hero"
-    />
 
     <section class="relative h-[5000px]">
         <div class="sticky top-0 h-screen overflow-x-hidden">

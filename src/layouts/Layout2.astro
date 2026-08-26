@@ -3,11 +3,11 @@ import BaseLayout from "./BaseLayout.astro";
 // import {ClientRouter} from "astro:transitions";
 import {getEntry} from "astro:content";
 import {defaults} from "../config/site";
-import Header from "../components/header/Header.astro";
-import Footer from "../components/footer/Footer.astro";
+// import Header from "../components/header/Header.astro";
+// import Footer from "../components/footer/Footer.astro";
 
 // Load site info for branding
-const site = await getEntry("siteInfo", "main");
+// const site = await getEntry("siteInfo", "main");
 
 const {
     title,
@@ -40,11 +40,11 @@ const {
         <!--/>-->
         <slot name="head"/>
     </Fragment>
-    <Header
-            variant={isHome ? "home" : "default"}
-            defaults={defaults}
-            site={site}
-    />
+    <!--<Header-->
+    <!--        variant={isHome ? "home" : "default"}-->
+    <!--        defaults={defaults}-->
+    <!--        site={site}-->
+    <!--/>-->
     <main class="mx-auto">
         <div class="md:bg-white shadow-2xl ring-1 ring-black/5">
             <div>
@@ -55,5 +55,5 @@ const {
             </div>
         </div>
     </main>
-    <Footer defaults={defaults} site={site}/>
+    <!--<Footer defaults={defaults} site={site}/>-->
 </BaseLayout>
