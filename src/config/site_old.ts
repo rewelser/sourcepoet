@@ -1,10 +1,17 @@
-import siteLogo from "./assets/genericlogo.svg";
+import siteLogo from "./assets/sourcepoet_transparent.svg";
+import bookingHeroPhoto from "./assets/default-booking-photo.jpg";
+import personProfilePicture from "./assets/default-booking-profile.jpg";
+import personRunwayPhoto from "./assets/default-runway-photo.svg";
 import errorGraphic404 from "./assets/404.webp";
 
 export const defaults = {
     siteName: "Company Name",
     siteUrl: "https://www.example.com/",
     siteLogo,
+    personProfilePicture,
+    personRunwayPhoto,
+    bookingHeroPhoto,
+    bookingHeroPhotoAltText: "Company Booking photo",
     ogPhoto: "/default_media/ogimages/generic-og-image.jpg",
     address: {
         streetAddress: "123 Main St",

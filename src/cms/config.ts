@@ -73,13 +73,13 @@ export const cmsConfig = defineCmsConfig({
 
             files: [
                 {
-                    name: "about",
+                    name: "info",
                     label: "About",
                     file: "src/content/site/about.yaml",
 
                     fields: [
                         {
-                            name: "title",
+                            name: "legalName",
                             label: "Title",
                             widget: "string",
                         },
@@ -92,18 +92,18 @@ export const cmsConfig = defineCmsConfig({
                 },
 
                 {
-                    name: "contact",
+                    name: "branding",
                     label: "Contact",
                     file: "src/content/site/contact.yaml",
 
                     fields: [
                         {
-                            name: "email",
+                            name: "logoDark",
                             label: "Email",
                             widget: "string",
                         },
                         {
-                            name: "phone",
+                            name: "logoLight",
                             label: "Phone",
                             widget: "string",
                         },
