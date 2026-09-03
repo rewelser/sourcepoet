@@ -1,9 +1,9 @@
 ---
 import {getEntry} from "astro:content";
 import "../styles/global.css";
-import {defaults} from "../config/site";
+// import {defaults} from "../config/site";
 // import ShareMeta from "../components/ShareMeta.astro";
-const branding = await getEntry("branding", "main");
+// const branding = await getEntry("branding", "main");
 import spectral400Url from "@fontsource/spectral/files/spectral-latin-400-normal.woff2?url";
 
 // import "@fontsource/spectral";
@@ -17,7 +17,7 @@ import spectral400Url from "@fontsource/spectral/files/spectral-latin-400-normal
 // const site = await getEntry("siteInfo", "main");
 // const siteName = site?.data?.siteName ?? defaults.siteName;
 // const sitewideOgImage = branding?.data.sitewideOGPhoto;
-const fallbackOgImage = defaults.ogPhoto;
+// const fallbackOgImage = defaults.ogPhoto;
 
 const {
     title: pageTitle,

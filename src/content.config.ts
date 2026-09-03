@@ -8,16 +8,16 @@ import {
 
 import {cmsConfig} from "./cms/config";
 
-const posts = defineCmsCollection(getCmsCollection(cmsConfig, "posts"));
-const authors = defineCmsCollection(getCmsCollection(cmsConfig, "authors"));
+// const posts = defineCmsCollection(getCmsCollection(cmsConfig, "posts"));
+// const authors = defineCmsCollection(getCmsCollection(cmsConfig, "authors"));
 const site = defineCmsFileCollection(getCmsCollection(cmsConfig, "site"));
-const branding = defineCmsSingleton(getCmsSingleton(cmsConfig, "branding"));
-const navigation = defineCmsSingleton(getCmsSingleton(cmsConfig, "navigation"));
+// const branding = defineCmsSingleton(getCmsSingleton(cmsConfig, "branding"));
+// const navigation = defineCmsSingleton(getCmsSingleton(cmsConfig, "navigation"));
 
 export const collections = {
-    posts,
-    authors,
+    // posts,
+    // authors,
     site,
-    branding,
-    navigation,
+    // branding,
+    // navigation,
 };

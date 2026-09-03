@@ -12,58 +12,6 @@ export const cmsConfig = defineCmsConfig({
 
     collections: [
         {
-            name: "posts",
-            label: "Posts",
-            folder: "src/content/posts",
-
-            astro: {
-                pattern: "**/*.md",
-                image: "local",
-                bodyMode: "document",
-                bodyField: "content",
-            },
-
-            path: "{{slug}}/index",
-
-            media_folder: "",
-            public_folder: "",
-
-            fields: [
-                {
-                    name: "title",
-                    label: "Title",
-                    widget: "string",
-                },
-                {
-                    name: "hero",
-                    label: "Hero",
-                    widget: "image",
-                },
-                {
-                    name: "content",
-                    label: "Content",
-                    widget: "markdown",
-                },
-                {
-                    name: "author",
-                    label: "Author",
-                    widget: "relation",
-
-                    collection: "authors",
-
-                    search_fields: [
-                        "name",
-                    ],
-
-                    display_fields: [
-                        "name",
-                    ],
-
-                    value_field: "{{slug}}",
-                },
-            ],
-        },
-        {
             name: "site",
             label: "Site",
 
@@ -74,262 +22,366 @@ export const cmsConfig = defineCmsConfig({
             files: [
                 {
                     name: "info",
-                    label: "About",
-                    file: "src/content/site/about.yaml",
+                    label: "Site Info",
+                    file: "src/content/site/info.json",
+                    format: "json",
 
                     fields: [
                         {
-                            name: "legalName",
-                            label: "Title",
+                            name: "siteName",
+                            label: "Site / Business Name",
                             widget: "string",
+                            required: false,
+                        },
+                        {
+                            name: "legalName",
+                            label: "Legal Business Name",
+                            widget: "string",
+                            required: false,
+                            hint: "Optional. If omitted, the site name will be used.",
+                        },
+                        {
+                            name: "siteUrl",
+                            label: "Full Site URL",
+                            widget: "string",
+                            type: "url",
+                            required: false,
                         },
                         {
                             name: "description",
-                            label: "Description",
+                            label: "Business Description",
                             widget: "text",
+                            required: false,
+                        },
+                        {
+                            name: "schemaType",
+                            label: "Schema.org Business Type",
+                            widget: "string",
+                            required: false,
+                            hint: 'Schema.org type such as "LocalBusiness".',
+                        },
+                        {
+                            name: "address",
+                            label: "Address",
+                            widget: "object",
+                            required: false,
+
+                            fields: [
+                                {
+                                    name: "streetAddress",
+                                    label: "Street",
+                                    widget: "string",
+                                    required: false,
+                                },
+                                {
+                                    name: "addressLocality",
+                                    label: "City / Locality",
+                                    widget: "string",
+                                    required: false,
+                                },
+                                {
+                                    name: "addressRegion",
+                                    label: "State / Region",
+                                    widget: "string",
+                                    required: false,
+                                },
+                                {
+                                    name: "postalCode",
+                                    label: "Postal Code",
+                                    widget: "string",
+                                    required: false,
+                                },
+                                {
+                                    name: "addressCountry",
+                                    label: "Country Code",
+                                    widget: "string",
+                                    required: false,
+                                    hint: "ISO 3166-1 alpha-2 country code, e.g. US.",
+                                    pattern: [
+                                        "^[A-Z]{2}$",
+                                        "Use a 2-letter ISO country code, e.g. US.",
+                                    ],
+                                },
+                            ],
+                        },
+                        {
+                            name: "placeId",
+                            label: "Google Maps Place ID",
+                            widget: "string",
+                            required: false,
+                        },
+                        {
+                            name: "mapHref",
+                            label: "Map URL",
+                            widget: "string",
+                            type: "url",
+                            required: false,
+                        },
+                        {
+                            name: "timeZone",
+                            label: "Time Zone",
+                            widget: "string",
+                            required: false,
+                            hint: 'IANA time zone, e.g. "America/New_York".',
+                        },
+                        {
+                            name: "phone",
+                            label: "Phone Number",
+                            widget: "string",
+                            required: false,
+                        },
+                        {
+                            name: "email",
+                            label: "Email",
+                            widget: "string",
+                            type: "email",
+                            required: false,
+                        },
+                        {
+                            name: "hours",
+                            label: "Hours",
+                            widget: "list",
+                            required: false,
+
+                            fields: [
+                                {
+                                    name: "days",
+                                    label: "Days",
+                                    widget: "select",
+                                    multiple: true,
+
+                                    options: [
+                                        "Monday",
+                                        "Tuesday",
+                                        "Wednesday",
+                                        "Thursday",
+                                        "Friday",
+                                        "Saturday",
+                                        "Sunday",
+                                    ],
+                                },
+                                {
+                                    name: "closed",
+                                    label: "Closed",
+                                    widget: "boolean",
+                                    required: false,
+                                    default: false,
+                                },
+                                {
+                                    name: "opens",
+                                    label: "Opening Time",
+                                    widget: "string",
+                                    required: false,
+                                    hint: "24-hour time, e.g. 12:00.",
+                                    pattern: [
+                                        "^([01]\\d|2[0-3]):[0-5]\\d$",
+                                        "Use 24-hour HH:MM format, e.g. 12:00.",
+                                    ],
+                                },
+                                {
+                                    name: "closes",
+                                    label: "Closing Time",
+                                    widget: "string",
+                                    required: false,
+                                    hint: "24-hour time, e.g. 19:00.",
+                                    pattern: [
+                                        "^([01]\\d|2[0-3]):[0-5]\\d$",
+                                        "Use 24-hour HH:MM format, e.g. 19:00.",
+                                    ],
+                                },
+                            ],
+                        },
+                        {
+                            name: "hoursShortline",
+                            label: "Hours Shortline",
+                            widget: "text",
+                            required: false,
+                            hint: "Human-readable summary of the business hours.",
+                        },
+                        {
+                            name: "socials",
+                            label: "Socials",
+                            widget: "object",
+                            required: false,
+                            collapsed: true,
+
+                            fields: [
+                                {
+                                    name: "instagram",
+                                    label: "Instagram",
+                                    widget: "string",
+                                    type: "url",
+                                    required: false,
+                                },
+                                {
+                                    name: "tiktok",
+                                    label: "TikTok",
+                                    widget: "string",
+                                    type: "url",
+                                    required: false,
+                                },
+                                {
+                                    name: "youtube",
+                                    label: "YouTube",
+                                    widget: "string",
+                                    type: "url",
+                                    required: false,
+                                },
+                                {
+                                    name: "facebook",
+                                    label: "Facebook",
+                                    widget: "string",
+                                    type: "url",
+                                    required: false,
+                                },
+                                {
+                                    name: "x",
+                                    label: "X (Twitter)",
+                                    widget: "string",
+                                    type: "url",
+                                    required: false,
+                                },
+                                {
+                                    name: "threads",
+                                    label: "Threads",
+                                    widget: "string",
+                                    type: "url",
+                                    required: false,
+                                },
+                                {
+                                    name: "tumblr",
+                                    label: "Tumblr",
+                                    widget: "string",
+                                    type: "url",
+                                    required: false,
+                                },
+                                {
+                                    name: "pinterest",
+                                    label: "Pinterest",
+                                    widget: "string",
+                                    type: "url",
+                                    required: false,
+                                },
+                            ],
+                        },
+                        {
+                            name: "privacyPolicy",
+                            label: "Privacy Policy",
+                            widget: "file",
+                            required: false,
+                            media_folder: "{{dirname}}/assets/policies",
+                            public_folder: "assets/policies",
                         },
                     ],
                 },
 
                 {
                     name: "branding",
-                    label: "Contact",
-                    file: "src/content/site/contact.yaml",
+                    label: "Branding",
+                    file: "src/content/site/branding.json",
+                    format: "json",
+
+                    media_folder: "assets/images",
+                    public_folder: "assets/images",
 
                     fields: [
                         {
+                            name: "logoDefault",
+                            label: "Default Logo",
+                            widget: "image",
+                            required: false,
+                            hint: "General-purpose logo. A built-in fallback is used if omitted.",
+                        },
+                        {
                             name: "logoDark",
-                            label: "Email",
-                            widget: "string",
+                            label: "Logo — Dark",
+                            widget: "image",
+                            required: false,
+                            hint: "Dark-on-light logo. Falls back to the default logo if omitted.",
                         },
                         {
                             name: "logoLight",
-                            label: "Phone",
-                            widget: "string",
-                        },
-                    ],
-                },
-
-                {
-                    name: "settings",
-                    label: "Settings",
-                    file: "src/content/site/settings.yaml",
-
-                    fields: [
-                        {
-                            name: "siteName",
-                            label: "Site Name",
-                            widget: "string",
-                        },
-                        {
-                            name: "environment",
-                            label: "Environment",
-                            widget: "select",
-                            options: ["development", "production"],
-                        },
-                    ],
-                },
-            ],
-        },
-        {
-            name: "authors",
-            label: "Authors",
-            folder: "src/content/authors",
-
-            astro: {
-                pattern: "**/*.md",
-            },
-
-            fields: [
-                {
-                    name: "name",
-                    label: "Name",
-                    widget: "string",
-                },
-            ],
-        },
-    ],
-
-    singletons: [
-        {
-            name: "branding",
-            label: "Branding",
-            file: "src/content/branding/main.yaml",
-
-            astro: {
-                image: "local",
-            },
-
-            fields: [
-                {
-                    name: "name",
-                    label: "Brand Name",
-                    widget: "string",
-                },
-                {
-                    name: "theme",
-                    label: "Theme",
-                    widget: "select",
-
-                    options: [
-                        "light",
-                        "dark",
-                    ],
-                },
-                {
-                    name: "logo",
-                    label: "Logo",
-                    widget: "image",
-                    required: false,
-                },
-                {
-                    name: "identity",
-                    label: "Identity",
-                    widget: "object",
-
-                    fields: [
-                        {
-                            name: "displayName",
-                            label: "Display Name",
-                            widget: "string",
-                        },
-                        {
-                            name: "tagline",
-                            label: "Tagline",
-                            widget: "string",
+                            label: "Logo — Light",
+                            widget: "image",
                             required: false,
+                            hint: "Light-on-dark logo. Falls back to the default logo if omitted.",
                         },
-                    ],
-                },
-                {
-                    name: "socials",
-                    label: "Social Links",
-                    widget: "list",
+                        {
+                            name: "sitewideOGPhoto",
+                            label: "Sitewide Open Graph Image",
+                            widget: "image",
+                            required: false,
 
-                    fields: [
-                        {
-                            name: "platform",
-                            label: "Platform",
-                            widget: "select",
-                            options: [
-                                "github",
-                                "instagram",
-                                "linkedin",
-                            ],
-                        },
-                        {
-                            name: "url",
-                            label: "URL",
-                            widget: "string",
-                        },
-                    ],
-                },
-                {
-                    name: "keywords",
-                    label: "Keywords",
-                    widget: "list",
-                },
-                // {
-                //     name: "years",
-                //     label: "Years",
-                //     widget: "list",
-                //
-                //     field: {
-                //         name: "year",
-                //         label: "Year",
-                //         widget: "number",
-                //     },
-                // },
-                {
-                    name: "blocks",
-                    label: "Content Blocks",
-                    widget: "list",
+                            astro: {
+                                image: "public",
+                            },
 
-                    types: [
+                            media_folder: "public/uploads/ogimages",
+                            public_folder: "/uploads/ogimages",
+
+                            hint: "Fallback image used when sharing pages without a page-specific social image.",
+                        },
                         {
-                            name: "heading",
-                            label: "Heading",
+                            name: "hero",
+                            label: "Hero",
+                            widget: "object",
+                            required: false,
 
                             fields: [
                                 {
-                                    name: "text",
-                                    label: "Text",
-                                    widget: "string",
+                                    name: "image",
+                                    label: "Hero Image",
+                                    widget: "image",
+                                    required: false,
                                 },
-
                                 {
-                                    name: "level",
-                                    label: "Level",
-                                    widget: "select",
+                                    name: "imageAltText",
+                                    label: "Hero Image Alt Text",
+                                    widget: "string",
+                                    required: false,
+                                },
+                                {
+                                    name: "video",
+                                    label: "Hero Video",
+                                    widget: "object",
+                                    required: false,
 
-                                    options: [
-                                        "h2",
-                                        "h3",
+                                    fields: [
+                                        {
+                                            name: "mobile",
+                                            label: "Mobile Video",
+                                            widget: "file",
+                                            required: false,
+                                            media_folder: "public/uploads/misc_videos",
+                                            public_folder: "/uploads/misc_videos",
+                                        },
+                                        {
+                                            name: "desktop",
+                                            label: "Desktop Video",
+                                            widget: "file",
+                                            required: false,
+                                            media_folder: "public/uploads/misc_videos",
+                                            public_folder: "/uploads/misc_videos",
+                                        },
+                                        {
+                                            name: "posterMobile",
+                                            label: "Mobile Video Poster",
+                                            widget: "image",
+                                            required: false,
+                                        },
+                                        {
+                                            name: "posterDesktop",
+                                            label: "Desktop Video Poster",
+                                            widget: "image",
+                                            required: false,
+                                        },
                                     ],
                                 },
                             ],
                         },
-
-                        {
-                            name: "paragraph",
-                            label: "Paragraph",
-
-                            fields: [
-                                {
-                                    name: "text",
-                                    label: "Text",
-                                    widget: "text",
-                                },
-                            ],
-                        },
-                    ],
-                },
-                {
-                    name: "priority",
-                    label: "Priority",
-                    widget: "number",
-                    value_type: "int",
-                    min: 1,
-                    max: 5,
-                },
-                {
-                    name: "identifier",
-                    label: "Identifier",
-                    widget: "uuid",
-                },
-                {
-                    name: "metadata",
-                    label: "Metadata",
-                    widget: "keyvalue",
-                },
-            ],
-        },
-        {
-            name: "navigation",
-            label: "Navigation",
-            file: "src/content/navigation/main.yaml",
-
-            fields: [
-                {
-                    name: "items",
-                    label: "Items",
-                    widget: "list",
-                    root: true,
-
-                    fields: [
-                        {
-                            name: "label",
-                            label: "Label",
-                            widget: "string",
-                        },
-                        {
-                            name: "href",
-                            label: "URL",
-                            widget: "string",
-                        },
                     ],
                 },
             ],
         },
-    ]
+    ],
 });
