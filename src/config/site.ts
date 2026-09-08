@@ -1,6 +1,7 @@
 import {getCmsFileEntry} from "@sourcepoetry/astro-sveltia/content";
 import {cmsConfig} from "../cms/config.ts";
 import defaultLogo from "./assets/paper1.jpg";
+import type {MergeDefined} from "./types.ts";
 
 const defaults = {
     info: {
@@ -26,36 +27,132 @@ const defaults = {
     }
 }
 
-export async function getSiteConfig() {
-    const [infoEntry, brandingEntry] = await Promise.all([
-        getCmsFileEntry(cmsConfig, "site", "info"),
-        getCmsFileEntry(cmsConfig, "site", "branding")
-    ])
-
-    const info = mergeDefined(defaults.info, infoEntry?.data);
-    const branding = mergeDefined(defaults.branding, brandingEntry?.data);
-
+function buildBusinessSchema(
+    info: Awaited<ReturnType<typeof resolveInfo>>,
+    branding: Awaited<ReturnType<typeof resolveBranding>>,
+) {
     return {
-        info: {
-            ...info,
-            legalName: info.legalName ?? info.siteName,
+        "@context": "https://schema.org",
+        "@type": info.schemaType,
+        name: info.siteName,
+        legalName: info.legalName,
+        url: info.siteUrl,
+        telephone: info.phone,
+        email: info.email,
+        logo: branding.logoDefault.src,
+
+        address: {
+            "@type": "PostalAddress",
+            ...info.address,
         },
 
-        branding: {
-            ...branding,
-            logoDark: branding.logoDark ?? branding.logoDefault,
-            logoLight: branding.logoLight ?? branding.logoDefault,
+        ...(info.mapHref && {hasMap: info.mapHref}),
 
-        }
-    }
+        ...(info.placeId && {
+            identifier: {
+                "@type": "PropertyValue",
+                propertyID: "Google Place ID",
+                value: info.placeId,
+            },
+        }),
+
+        sameAs: Object.values(info.socials).filter(
+            (value): value is string => typeof value === "string",
+        ),
+
+        openingHoursSpecification: info.hours.map((hours) => ({
+            "@type": "OpeningHoursSpecification",
+            dayOfWeek: hours.days,
+            ...(!hours.closed && {
+                opens: hours.opens,
+                closes: hours.closes,
+            }),
+        })),
+    };
 }
+
+async function resolveInfo() {
+    const entry = await getCmsFileEntry(cmsConfig, "site", "info");
+    const info = mergeDefined(defaults.info, entry?.data);
+
+    return {
+        ...info,
+        legalName: info.legalName ?? info.siteName,
+    };
+}
+
+async function resolveBranding() {
+    const entry = await getCmsFileEntry(cmsConfig, "site", "branding");
+    const branding = mergeDefined(defaults.branding, entry?.data);
+
+    return {
+        ...branding,
+        logoDark: branding.logoDark ?? branding.logoDefault,
+        logoLight: branding.logoLight ?? branding.logoDefault,
+    };
+}
+
+export async function getSiteConfig() {
+    const [info, branding] = await Promise.all([
+        resolveInfo(),
+        resolveBranding(),
+    ]);
+
+    return {
+        info,
+        branding,
+        schema: buildBusinessSchema(info, branding),
+    };
+}
+
+// export async function getSiteConfig() {
+//     const [infoEntry, brandingEntry] = await Promise.all([
+//         getCmsFileEntry(cmsConfig, "site", "info"),
+//         getCmsFileEntry(cmsConfig, "site", "branding")
+//     ])
+//
+//     const info = mergeDefined(defaults.info, infoEntry?.data);
+//     const branding = mergeDefined(defaults.branding, brandingEntry?.data);
+//
+//     return {
+//         info: {
+//             ...info,
+//             legalName: info.legalName ?? info.siteName,
+//         },
+//
+//         branding: {
+//             ...branding,
+//             logoDark: branding.logoDark ?? branding.logoDefault,
+//             logoLight: branding.logoLight ?? branding.logoDefault,
+//
+//         },
+//         schema: buildBusinessSchema(info, branding),
+//     }
+// }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
     return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
-function mergeDefined<D extends object, O extends object | undefined>(defaults: D, overrides: O): D & NonNullable<O> {
-    if (!overrides) return defaults as D & NonNullable<O>;
+// function mergeDefined<D extends object, O extends object | undefined>(defaults: D, overrides: O): D & NonNullable<O> {
+//     if (!overrides) return defaults as D & NonNullable<O>;
+//
+//     const result = {...defaults} as Record<string, unknown>;
+//
+//     for (const [key, value] of Object.entries(overrides)) {
+//         if (value === undefined) continue;
+//
+//         const fallback = result[key];
+//
+//         result[key] = isRecord(fallback) && isRecord(value) ? mergeDefined(fallback, value) : value;
+//
+//     }
+//     return result as D & NonNullable<O>;
+//
+// }
+
+function mergeDefined<D extends object, O extends object | undefined>(defaults: D, overrides: O): MergeDefined<D, O> {
+    if (!overrides) return defaults as MergeDefined<D, O>;
 
     const result = {...defaults} as Record<string, unknown>;
 
@@ -64,9 +161,11 @@ function mergeDefined<D extends object, O extends object | undefined>(defaults: 
 
         const fallback = result[key];
 
-        result[key] = isRecord(fallback) && isRecord(value) ? mergeDefined(fallback, value) : value;
-
+        result[key] =
+            isRecord(fallback) && isRecord(value)
+                ? mergeDefined(fallback, value)
+                : value;
     }
-    return result as D & NonNullable<O>;
 
+    return result as MergeDefined<D, O>;
 }
