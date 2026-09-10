@@ -1,0 +1,33 @@
+---
+const {
+    title,
+    description,
+    canonical,
+    siteName,
+    ogImage
+} = Astro.props as {
+    title: string,
+    description: string,
+    canonical: string,
+    siteName: string,
+    ogImage: string
+};
+
+const imageUrl = new URL(ogImage, Astro.site ?? Astro.url.origin).toString();
+---
+<>
+    <meta property="og:title" content={title}/>
+    <meta property="og:description" content={description}/>
+    <meta property="og:url" content={canonical}/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:image" content={imageUrl}/>
+    <meta property="og:image:alt" content={title} />
+    <meta property="og:site_name" content={siteName}/>
+    <meta property="og:locale" content="en_US" />
+
+    <meta name="twitter:card" content="summary_large_image"/>
+    <meta name="twitter:title" content={title}/>
+    <meta name="twitter:description" content={description}/>
+    <meta name="twitter:image" content={imageUrl}/>
+    <meta name="twitter:image:alt" content={title} />
+</>

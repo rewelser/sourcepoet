@@ -5,6 +5,9 @@ import "../styles/global.css";
 // import ShareMeta from "../components/ShareMeta.astro";
 // const branding = await getEntry("branding", "main");
 import spectral400Url from "@fontsource/spectral/files/spectral-latin-400-normal.woff2?url";
+import JsonLd from "../components/core/JsonLd.astro";
+import {getSiteConfig} from "../config/site.ts";
+import ShareMeta from "../components/core/ShareMeta.astro";
 
 // import "@fontsource/spectral";
 // import "@fontsource/spectral/400.css";
@@ -14,27 +17,32 @@ import spectral400Url from "@fontsource/spectral/files/spectral-latin-400-normal
 // import "@fontsource/spectral/800.css";
 // import AnalyticsTags from "../components/analytics/AnalyticsTags.astro";
 
-// const site = await getEntry("siteInfo", "main");
-// const siteName = site?.data?.siteName ?? defaults.siteName;
-// const sitewideOgImage = branding?.data.sitewideOGPhoto;
-// const fallbackOgImage = defaults.ogPhoto;
+const site = await getSiteConfig();
+const siteName: string = site.info.siteName;
+const sitewideOgImage: string = site.branding.ogImageDefault;
 
 const {
     title: pageTitle,
     description: pageDescription,
-    ogImage,
+    ogImage = sitewideOgImage,
     preloadImage,
     bodyClass = "",
     bodyStyle = "",
     htmlLang = "en",
-} = Astro.props;
+    schema,
+} = Astro.props as {
+    title: string,
+    description: string,
+    ogImage: string,
+    preloadImage: string,
+    bodyClass: string,
+    bodyStyle: string,
+    htmlLang: string,
+    schema?: unknown;
+};
 
-// const pageTitleUsed = pageTitle ? `${pageTitle} | ${siteName}` : siteName;
-// const pageDescriptionUsed = pageDescription ? pageDescription : siteName;
-// const ogImageUsed =
-//     ogImage ??
-//     sitewideOgImage ??
-//     fallbackOgImage;
+const pageTitleUsed = pageTitle ? `${pageTitle} | ${siteName}` : siteName;
+const pageDescriptionUsed = pageDescription ? pageDescription : siteName;
 const siteUrl = Astro.site ?? Astro.url.origin;
 const canonical = new URL(Astro.url.pathname, siteUrl).toString();
 const isNoIndex = import.meta.env.PUBLIC_NOINDEX === "true";
@@ -48,9 +56,9 @@ const isNoIndex = import.meta.env.PUBLIC_NOINDEX === "true";
 
     <!--<AnalyticsTags isNoIndex={isNoIndex} server:defer></AnalyticsTags>-->
 
-    <!--<title>{pageTitleUsed}</title>-->
+    <title>{pageTitleUsed}</title>
     <!-- <meta name="theme-color" content="#161b22" media="(prefers-color-scheme: dark)"> -->
-    <!--<meta name="description" content={pageDescriptionUsed}/>-->
+    <meta name="description" content={pageDescriptionUsed}/>
     <link rel="canonical" href={canonical}/>
 
     {isNoIndex && (
@@ -58,16 +66,16 @@ const isNoIndex = import.meta.env.PUBLIC_NOINDEX === "true";
     )}
 
 
-    <!--<link rel="icon" href="/favicon.ico" type="image/x-icon">-->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg"/>
     <link rel="icon" href="/favicon.ico" type="image/x-icon"/>
     <link rel="sitemap" href="/sitemap-index.xml"/>
-    <!--<ShareMeta-->
-    <!--        title={pageTitleUsed}-->
-    <!--        description={pageDescriptionUsed}-->
-    <!--        canonical={canonical}-->
-    <!--        ogImage={ogImageUsed}-->
-    <!--/>-->
+    <ShareMeta
+            title={pageTitleUsed}
+            description={pageDescriptionUsed}
+            canonical={canonical}
+            siteName={siteName}
+            ogImage={ogImage}
+    />
     {preloadImage &&
             <link rel="preload" as="image" href={preloadImage}/>}
     <!--<link-->
@@ -77,6 +85,11 @@ const isNoIndex = import.meta.env.PUBLIC_NOINDEX === "true";
     <!--        type="font/woff2"-->
     <!--        crossorigin-->
     <!--/>-->
+    <style>
+        html { color-scheme: light }
+        body { margin: 0; }
+    </style>
+    {schema !== undefined && <JsonLd data={schema} />}
     <slot name="head"/>
 </head>
 <body class={`${bodyClass} margin-0`} style={bodyStyle}>

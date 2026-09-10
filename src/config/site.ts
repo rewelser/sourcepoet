@@ -23,7 +23,8 @@ const defaults = {
         socials: {},
     },
     branding: {
-        logoDefault: defaultLogo
+        logoDefault: defaultLogo,
+        ogImageDefault: "./public/uploads/ogimages/default_sitewide_og.jpg"
     }
 }
 
@@ -34,6 +35,7 @@ function buildBusinessSchema(
     return {
         "@context": "https://schema.org",
         "@type": info.schemaType,
+        "@id": `${info.siteUrl}/#business`,
         name: info.siteName,
         legalName: info.legalName,
         url: info.siteUrl,
@@ -105,51 +107,9 @@ export async function getSiteConfig() {
     };
 }
 
-// export async function getSiteConfig() {
-//     const [infoEntry, brandingEntry] = await Promise.all([
-//         getCmsFileEntry(cmsConfig, "site", "info"),
-//         getCmsFileEntry(cmsConfig, "site", "branding")
-//     ])
-//
-//     const info = mergeDefined(defaults.info, infoEntry?.data);
-//     const branding = mergeDefined(defaults.branding, brandingEntry?.data);
-//
-//     return {
-//         info: {
-//             ...info,
-//             legalName: info.legalName ?? info.siteName,
-//         },
-//
-//         branding: {
-//             ...branding,
-//             logoDark: branding.logoDark ?? branding.logoDefault,
-//             logoLight: branding.logoLight ?? branding.logoDefault,
-//
-//         },
-//         schema: buildBusinessSchema(info, branding),
-//     }
-// }
-
 function isRecord(value: unknown): value is Record<string, unknown> {
     return typeof value === "object" && value !== null && !Array.isArray(value);
 }
-
-// function mergeDefined<D extends object, O extends object | undefined>(defaults: D, overrides: O): D & NonNullable<O> {
-//     if (!overrides) return defaults as D & NonNullable<O>;
-//
-//     const result = {...defaults} as Record<string, unknown>;
-//
-//     for (const [key, value] of Object.entries(overrides)) {
-//         if (value === undefined) continue;
-//
-//         const fallback = result[key];
-//
-//         result[key] = isRecord(fallback) && isRecord(value) ? mergeDefined(fallback, value) : value;
-//
-//     }
-//     return result as D & NonNullable<O>;
-//
-// }
 
 function mergeDefined<D extends object, O extends object | undefined>(defaults: D, overrides: O): MergeDefined<D, O> {
     if (!overrides) return defaults as MergeDefined<D, O>;
