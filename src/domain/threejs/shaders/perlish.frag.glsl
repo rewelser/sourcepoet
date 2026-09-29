@@ -1,7 +1,17 @@
         uniform float time;
         uniform vec2 resolution;
-        uniform vec3 foreground;
-        uniform vec3 background;
+        //uniform vec3 foreground;
+        //uniform vec3 background;
+        uniform vec3 color1;
+        uniform vec3 color2;
+        uniform vec3 color3;
+        uniform vec3 color4;
+        uniform vec3 color5;
+        uniform vec3 color6;
+        uniform vec3 color7;
+        uniform vec3 color8;
+        uniform vec3 color9;
+        uniform vec3 color10;
         uniform float maxProbPeak;
         uniform float minProbPeak;
         uniform float maxProbTrough;
@@ -129,7 +139,7 @@
 
           // --- original color calc: per-pixel random ----
           float r = hash21(gl_FragCoord.xy);
-          //vec3 color = (r < prob) ? foreground : background;
+          //// vec3 color = (r < prob) ? foreground : background;
 
 
           // ---- other ways of calculating color ----
@@ -140,9 +150,26 @@
           // float r = gl_FragCoord.x / resolution.x;
           // vec3 color = (r < prob) ? foreground : background;
           // -- considerations for other pages --
-           float threshold = 0.5; // tweak this as you like
+          // float threshold = 0.5; // tweak this as you like
+           float threshold1 = .10;
+           float threshold2 = .20;
+           float threshold3 = .30;
+           float threshold4 = .40;
+           float threshold5 = .50;
+           float threshold6 = .60;
+           float threshold7 = .70;
+           float threshold8 = .80;
           // - non-randomized, doesn't account for prob
-           vec3 color = (field > threshold) ? foreground : background;
+          vec3 color =
+            field < .10 ? color1 :
+            field < .20 ? color2 :
+            field < .30 ? color3 :
+            field < .40 ? color4 :
+            field < .50 ? color5 :
+            field < .60 ? color6 :
+            field < .70 ? color7 :
+            field < .80 ? color8 :
+                          color9;
           // - non-randomized, accounts for prob
           // vec3 color = (prob > threshold) ? foreground : background;
 

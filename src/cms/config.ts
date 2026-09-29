@@ -307,6 +307,13 @@ export const cmsConfig = defineCmsConfig({
                             hint: "Light-on-dark logo. Falls back to the default logo if omitted.",
                         },
                         {
+                            name: "logoSmall",
+                            label: "Logo — Small",
+                            widget: "image",
+                            required: false,
+                            hint: "Reduced-size logo, for use in sticky menus, etc.",
+                        },
+                        {
                             name: "sitewideOGPhoto",
                             label: "Sitewide Open Graph Image",
                             widget: "image",

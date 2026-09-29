@@ -2,140 +2,282 @@
 import Layout from "../layouts/Layout.astro";
 
 import PerlishPointClouds from "../components/PerlishPointClouds.astro";
-import logo from "/src/config/assets/sourcepoet_transparent.png";
-import paperbg from "/src/config/assets/paperbg.webp";
+// import logo from "/src/config/assets/sourcepoet_transparent.png";
+import paperbg from "/src/config/assets/aged_notepad.webp";
 import {Image} from "astro:assets";
 import FadeInImage from "../components/FadeInImage.astro";
 import {getEntry} from "astro:content";
 
-
-// const post = await getEntry("runtimePosts", "test");
-
-
-import type { ImageMetadata } from "astro";
+import LogoSmall from "../content/site/assets/images/sourcepoet_transparent_small.svg";
 
 
 // const post = await getEntry("runtimePosts", "test");
-//
-// if (!post) throw new Error("runtimePosts/test was not found.");
-//
-// const title: string = post.data.title;
-// const hero: ImageMetadata = post.data.hero;
-//
-// const author: {
-//     collection: "authors";
-//     id: string;
-//     } = post.data.author;
 
 
-// const post = await getEntry("cmsPosts", "test");
-//
-// const site = await getEntry("cmsSettings", "site");
-//
-//
-// const navigation = await getEntry("cmsNavigation", "main");
-//
-// if (!navigation) {
-//     throw new Error("Navigation was not found.");
-// }
-//
-// console.log(navigation.data);
-//
-//
-// const rootKeyvalue = await getEntry("cmsRootKeyvalue", "main");
-//
-// if (!rootKeyvalue) {
-//     throw new Error("Root keyvalue test was not found.");
-// }
-//
-// const links: Record<string, string> = rootKeyvalue.data;
-//
-// console.log("[root keyvalue]", rootKeyvalue.data);
-// rootKeyvalue.data.links;
+// import type { ImageMetadata } from "astro";
 
 import {cmsConfig} from "../cms/config";
 import {getCmsFileEntry} from "@sourcepoetry/astro-sveltia/content";
 import {getSiteConfig} from "../config/site.ts";
-
-// const site = await getCmsFileEntry(cmsConfig,"site", "settings");
-// const siteName: string = site.data.siteName;
 
 const site = await getSiteConfig();
 const hours = site.info.hours;
 const socials = site.info.socials;
 const schema = site.schema;
 const siteName: string = site.info.siteName;
+const logo = site.branding.logoDefault;
+const logoSmall = site.branding.logoSmall;
+
 if (!site) {
     throw new Error("Site settings were not found.");
 }
 
-
-// getEntry("posts", "test");
-// getEntry("site", "about");
-// getEntry("site", "contact");
-// getEntry("site", "settings");
-// getEntry("branding", "main");
-// getEntry("navigation", "main");
-// getCmsFileEntry("site", "about");
-
 const title = "Welserver – Portfolio";
 const description = "Software engineer portfolio and projects.";
+
+const hero_h2 = "Intentional web design";
+const charSequence_hero_h2 = Array.from(hero_h2);
+
+const hero_p1 = `keyed by human hands, / for human eyes.`;
+const charSequence_hero_p1 = Array.from(hero_p1);
+
+const charSequence1Length = charSequence_hero_h2.length;
+const charSequence2Length = charSequence_hero_p1.length;
 ---
-<Layout title={title} description={description}>
-    <section id="hero" class=`py-20 px-(--pad) bg-cover bg-center` style={{ backgroundImage: `url(${paperbg.src})` }}>
-        <div class="max-w-5xl mx-auto">
-            <h1 class="text-2xl md:text-8xl font-bold tracking-tight">
-                <FadeInImage src={logo} alt="Description of the photo"></FadeInImage>
-            </h1>
+<Layout title={title} description={description} data-color-theme="paper" data-color-theme-surface-pattern="dotgrid">
+    <Fragment slot="head">
+        <link rel="preload" as="image" href={paperbg.src}/>
+    </Fragment>
+    <!--<section id="hero"-->
+    <!--         class=`torn-bottom py-20 px-(&#45;&#45;pad) bg-cover bg-center`-->
+    <!--         style={{-->
+    <!--             backgroundImage: `url(${paperbg.src});`,-->
+    <!--             animation: `var(&#45;&#45;fade-in-animation)`-->
+    <!--         }}-->
+    <!--&gt;-->
+    <section id="hero"
+             class=`py-20 px-(--pad) bg-cover bg-center`
+             style={{
+                 animation: `var(--fade-in-animation)`
+             }}
+    >
+        <div
+                class="hero-content max-w-5xl max-h-[150vh] mx-auto relative aspect-625/1600"
+                style={{
+                    backgroundImage: `url(${paperbg.src})`,
+                    backgroundSize: "100% 100%",
+                    backgroundRepeat: "no-repeat",
+                    backgroundPosition: "center center",
+                }}
+        >
+            <div class="hero-copy-half">
+                <h1 class="text-2xl md:text-8xl font-bold tracking-tight">
+                    <FadeInImage src={logo} alt="Description of the photo"></FadeInImage>
+                </h1>
+            </div>
+            <div class="hero-copy-half sequence-group">
+
+                <h2 class="char-sequence">
+                    {charSequence_hero_h2.map((char, index) =>
+                        char === "/"
+                            ? <br/>
+                            : <span
+                                        class="char-appear"
+                                >{char}</span>
+                    )}
+                </h2>
+                <p class="char-sequence">
+                    {charSequence_hero_p1.map((char, index) =>
+                        char === "/"
+                            ? <br/>
+                            : <span class="char-appear sequence-2">{char}</span>
+                    )}
+                </p>
+            </div>
+
+
+            <!--<img src={paperbg.src} class="h-full absolute"/>-->
+
         </div>
     </section>
 
-    <section class="relative h-[5000px]">
-        <div class="sticky top-0 h-screen overflow-x-hidden">
-            <PerlishPointClouds
-                    foregroundColor="#1e90ff"
-                    backgroundColor="#000000"
-                    maxProbabilityPeak={0.8}
-                    minProbabilityPeak={0.4}
-                    maxProbabilityTrough={0.02}
-                    fieldSpeed={0.10}
-                    fieldSpeed={0.05}
-                    noiseScale={2.5}
-                    width="100%"
-                    height="100vh"
-            />
-        </div>
-        <div class="py-20 absolute">
-            <div style="height: 100vh; border-bottom: 1px solid #ccc;">
-                <h2 style="text-align: center; padding-top: 40vh;">Filler Section</h2>
-            </div>
-            <div style="height: 100vh; border-bottom: 1px solid #ccc;">
-                <h2 style="text-align: center; padding-top: 40vh;">Filler Section</h2>
-            </div>
-            <div style="height: 100vh; border-bottom: 1px solid #ccc;">
-                <h2 style="text-align: center; padding-top: 40vh;">Filler Section</h2>
-            </div>
-        </div>
+    <div class="h-[1000px] flex justify-center">
+        <section class="fling max-w-5xl">
+            <style>
+                .fling {
+                    width: 80%;
+                    height: 80%;
+                    margin: 50px;
+                    border: 1px solid var(--color-edge);
+                }
+            </style>
+            <nav
+                    class="diagonal-lines p-2 sticky top-0 z-50 h-16 mx-auto flex items-center justify-between"
+                    style="border-bottom: 1px solid var(--color-edge);"
+            >
+                <a href="/" class="font-semibold h-full flex items-center">
+                    <!--<img-->
+                    <!--        src={logoSmall.src}-->
+                    <!--        class="h-full"-->
+                    <!--/>-->
+                    <LogoSmall fill="var(--font-color-logo)" class="h-full w-full"></LogoSmall>
+                </a>
 
-    </section>
+                <div class="flex gap-6 text-sm">
+                    <a href="/projects/">Projects</a>
+                    <a href="/about/">About</a>
+                </div>
+            </nav>
+
+            <section class="h-[700px]" style="border-top: 1px solid var(--color-edge); border-bottom: 1px solid var(--color-edge);">
+                <!--<PerlishPointClouds-->
+                <!--        foregroundColor="ivory"-->
+                <!--        backgroundColor="gray"-->
+                <!--        maxProbabilityPeak={0.8}-->
+                <!--        minProbabilityPeak={0.4}-->
+                <!--        maxProbabilityTrough={0.02}-->
+                <!--        fieldSpeed={0.10}-->
+                <!--        fieldSpeed={0.05}-->
+                <!--        noiseScale={2.5}-->
+                <!--        width="100%"-->
+                <!--        height="100%"-->
+                <!--/>-->
+                <PerlishPointClouds
+                        colors={{
+                            color1: "#fffff0",
+                            color2: "#efefe2",
+                            color3: "#dfdfd4",
+                            color4: "#cfcfc6",
+                            color5: "#c0c0b8",
+                            color6: "#b0b0aa",
+                            color7: "#a0a09c",
+                            color8: "#90908e",
+                            color9: "#808080",
+                        }}
+                        maxProbabilityPeak={0.8}
+                        minProbabilityPeak={0.4}
+                        maxProbabilityTrough={0.02}
+                        fieldSpeed={0.10}
+                        fieldSpeed={0.05}
+                        noiseScale={2.5}
+                        width="100%"
+                        height="100%"
+                />
+            </section>
+
+        </section>
+
+    </div>
 
     <style>
-        body {
-            //background-image: repeating-linear-gradient(45deg, #0000, #0000 10px, lab(88.9551% -.959665 -4.3943) 10px 11px);
-            background-color: transparent;
-            background-image: linear-gradient(
-                    45deg,
-                    transparent 47%,
-                    #D8BFD8 47%,
-                    #D8BFD8 50%,
-                    transparent 50%,
-                    transparent 97%,
-                    #D8BFD8 97%,
-                    #D8BFD8 50%
-            );
-            background-size: 1.5rem 1.5rem;
+
+        #hero {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            z-index: 1;
+            width: 100%;
+        }
+
+        #hero .hero-content {
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            font-family: "CL Antique 37", serif;
+            /*font-size: 1.8rem;*/
+            text-align: center;
+        }
+
+        .hero-copy-half {
+            flex: 1;
+        }
+
+        .hero-copy-half h2 {
+            font-size: clamp(2rem, 5vw, 4rem);
+            line-height: 1.05;
+            letter-spacing: -0.025em;
+            margin: 0 0 1rem;
+        }
+
+        .hero-copy-half p {
+            font-size: clamp(1rem, 1.5vw, 1.2rem);
+            line-height: 1.6;
+            max-width: 60ch;
+            margin: 0;
+            color: rgb(0 0 0 / 0.7);
+        }
+
+        .hero-copy-half p + p {
+            margin-top: 0.75em;
         }
     </style>
+
+    <script>
+        const observer = new IntersectionObserver(async (entries) => {
+            for (const entry of entries) {
+                if (entry.isIntersecting) {
+                    queueSequenceGroupAnimations(entry.target);
+                }
+            }
+        }, {
+            rootMargin: '0px 0px -200px 0px',
+        });
+
+        async function animateSequence(target: Element) {
+            const lastChild = target.lastElementChild;
+
+            const animationFinished = new Promise(resolve => {
+                lastChild?.addEventListener('animationend', resolve, {once: true});
+            });
+
+            target.classList.add("animate");
+            await animationFinished;
+            await new Promise(resolve => setTimeout(resolve, 500));
+            observer.unobserve(target);
+        }
+
+        function queueSequenceGroupAnimations(target: Element) {
+            const sequenceTargets = target.querySelectorAll(".char-sequence");
+
+            let sequence = Promise.resolve();
+
+            for (const sequenceTarget of sequenceTargets) {
+                sequence = sequence.then(() => animateSequence(sequenceTarget))
+            }
+        }
+
+        document.querySelectorAll(".char-sequence").forEach((el) => observer.observe(el));
+        document.querySelectorAll(".sequence-group").forEach((el) => observer.observe(el));
+    </script>
+
+    <!--<section class="relative h-[5000px]">-->
+    <!--    <div class="sticky top-0 h-screen overflow-x-hidden">-->
+    <!--        <PerlishPointClouds-->
+    <!--                foregroundColor="#1e90ff"-->
+    <!--                backgroundColor="#000000"-->
+    <!--                maxProbabilityPeak={0.8}-->
+    <!--                minProbabilityPeak={0.4}-->
+    <!--                maxProbabilityTrough={0.02}-->
+    <!--                fieldSpeed={0.10}-->
+    <!--                fieldSpeed={0.05}-->
+    <!--                noiseScale={2.5}-->
+    <!--                width="100%"-->
+    <!--                height="100vh"-->
+    <!--        />-->
+    <!--    </div>-->
+    <!--    <div class="py-20 absolute">-->
+    <!--        <div style="height: 100vh; border-bottom: 1px solid #ccc;">-->
+    <!--            <h2 style="text-align: center; padding-top: 40vh;">Filler Section</h2>-->
+    <!--        </div>-->
+    <!--        <div style="height: 100vh; border-bottom: 1px solid #ccc;">-->
+    <!--            <h2 style="text-align: center; padding-top: 40vh;">Filler Section</h2>-->
+    <!--        </div>-->
+    <!--        <div style="height: 100vh; border-bottom: 1px solid #ccc;">-->
+    <!--            <h2 style="text-align: center; padding-top: 40vh;">Filler Section</h2>-->
+    <!--        </div>-->
+    <!--    </div>-->
+
+    <!--</section>-->
 </Layout>
 
 

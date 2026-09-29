@@ -1,0 +1,209 @@
+/* Shared behavior for every color theme */
+[data-color-theme] {
+    --color-placeholder: #6b7280;
+    --color-disuse: #ccc;
+    --color-muted: oklch(from var(--color-text) l c h / 0.8);
+    --color-muted-more: oklch(from var(--color-text) l c h / 0.6);
+
+    --button-hover-background: var(--color-use);
+    --button-hover-color: var(--color-edge);
+
+    --toggle-track-background: var(--color-disuse);
+    --toggle-track-checked-background: var(--color-use);
+    --toggle-thumb-background: var(--color-surface);
+    --toggle-label-color: var(--color-text);
+
+    background-color: var(--color-surface);
+
+    color: var(--color-text);
+    border-color: var(--color-edge);
+
+    & :where(h1, h2, h3, h4) {
+        color: var(--color-headings);
+    }
+
+    & :where(h2, h3, h4, h5).theme-extruded {
+        color: var(--color-headings-extruded);
+    }
+
+    & .theme-muted {
+        color: var(--color-muted);
+    }
+
+    & .theme-muted-more {
+        color: var(--color-muted-more);
+    }
+
+    .lead {
+        color: var(--color-lead);
+    }
+
+    ul > li::marker {
+        color: var(--color-bullets);
+    }
+
+    ol > li::marker {
+        color: var(--color-counters);
+    }
+
+    strong {
+        color: var(--color-bold);
+    }
+
+    a {
+        color: var(--color-links);
+    }
+
+    blockquote {
+        border-left-color: var(--color-quote-borders);
+        color: var(--color-quotes);
+    }
+
+    hr {
+        border-top-color: var(--color-hr);
+    }
+
+    code {
+        color: var(--color-code);
+    }
+
+    pre {
+        background: var(--color-pre-bg);
+        color: var(--color-pre-code);
+    }
+
+    pre code {
+        color: inherit;
+    }
+
+    table {
+        border-color: var(--color-td-borders);
+    }
+
+    th {
+        border-color: var(--color-th-borders);
+        color: var(--color-headings);
+        background: var(--color-table-heading-bg);
+    }
+
+    td {
+        border-color: var(--color-td-borders);
+    }
+
+    :where(figcaption, caption) {
+        color: var(--color-captions);
+    }
+
+    &.panel {
+        border: 1px solid var(--color-edge);
+        box-shadow: 5px 5px 0 var(--color-edge);
+        padding: 1.25rem;
+
+        @media (width >= 40rem) {
+            padding: 1.5rem;
+        }
+    }
+
+    .button-sharp,
+    .button-sharp-sub,
+    &.button-sharp,
+    &.button-sharp-sub {
+        --element-shadow-color: var(--color-edge);
+
+        border-color: var(--color-edge);
+        color: var(--color-edge);
+
+        &.theme-affirmative {
+            background-color: var(--color-use-affirmative);
+        }
+
+        &.theme-affirmative:hover {
+            background-color: var(--color-use-affirmative-select);
+        }
+
+        &:hover {
+            background-color: var(--button-hover-background);
+            color: var(--button-hover-color);
+        }
+    }
+
+    .input-sharp {
+        --element-shadow-color: var(--color-edge);
+        border-color: var(--color-edge);
+        background-color: white;
+        color: var(--color-edge);
+
+        &:hover {
+            background-color: var(--color-use);
+            color: var(--color-edge);
+        }
+
+        &::placeholder {
+            color: var(--color-placeholder);
+        }
+    }
+
+    .toggle,
+    &.toggle {
+        & > input:checked + .toggle-track {
+            background-color: var(--toggle-track-checked-background);
+        }
+
+        & > .toggle-track {
+            border-color: var(--color-edge);
+            background-color: var(--toggle-track-background);
+
+            & > .toggle-thumb {
+                border-color: var(--color-edge);
+                background-color: var(--toggle-thumb-background);
+                box-shadow: 1px 1px 0 var(--color-edge);
+            }
+        }
+
+        & > .toggle-label {
+            color: var(--toggle-label-color);
+        }
+    }
+}
+
+[data-color-theme="paper"] {
+    --color-surface: light-dark(ivory, oklch(0.2471 0.0185 34.94));
+    /*--color-surface: white;*/
+    --color-surface-2: light-dark(#eeeade, oklch(0.20 0.015 35));
+    --color-accent: light-dark(lightgray, oklch(0.4849 0.0185 34.94));
+    /*--color-accent: black;*/
+    --color-edge: var(--color-accent);
+    --color-use: #dbeafe;
+    --color-use-affirmative: oklch(97.9% 0.021 166.113);
+    --color-use-affirmative-select: oklch(95% 0.052 163.051);
+
+    /** TYPOGRAPHY **/
+    --color-text: light-dark(black, white);
+    --color-headings: var(--color-text, light-dark(black, white));
+    --color-headings-extruded: var(--color-headings, light-dark(black, white));
+    --color-lead: var(--color-text, light-dark(black, white));
+    --color-links: var(--color-text, light-dark(black, white));
+    --color-bold: var(--color-headings, light-dark(black, white));
+    --color-counters: var(--color-text, light-dark(black, white));
+    --color-bullets: var(--color-text, light-dark(black, white));
+    --color-hr: var(--color-text, light-dark(black, white));
+    --color-quotes: var(--color-text, light-dark(black, white));
+    --color-quote-borders: var(--color-text, light-dark(black, white));
+    --color-captions: var(--color-text, light-dark(black, white));
+    --color-code: var(--color-text, light-dark(black, white));
+    --color-pre-code: var(--color-code, light-dark(black, white));
+    --color-pre-bg: var(--color-surface-2, light-dark(black, white));
+    --color-th-borders: var(--color-code, light-dark(black, white));
+    --color-td-borders: var(--color-edge, light-dark(black, white));
+    --color-table-heading-bg: var(--color-surface-2, light-dark(black, white));
+    --color-logo: light-dark(crimson, oldlace);
+
+    &[data-color-theme-surface-pattern="dotgrid"] {
+        background-image: radial-gradient(
+                circle,
+                var(--color-accent) 1px,
+                var(--color-surface) 1px
+        );
+        background-size: 20px 20px;
+    }
+}

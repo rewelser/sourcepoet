@@ -1,9 +1,36 @@
 ---
-// PerlishPointClouds.astro
-
-export interface Props {
-    foregroundColor?: string;
-    backgroundColor?: string;
+const {
+    colors = {
+        color1: "#fffff0",
+        color2: "#efefe2",
+        color3: "#dfdfd4",
+        color4: "#cfcfc6",
+        color5: "#c0c0b8",
+        color6: "#b0b0aa",
+        color7: "#a0a09c",
+        color8: "#90908e",
+        color9: "#808080",
+    },
+    maxProbabilityPeak = 0.8,
+    minProbabilityPeak = 0.4,
+    maxProbabilityTrough = 0.02,
+    fieldSpeed = 0.15,
+    noiseScale = 2.5,
+    className,
+    width = "100%",
+    height = "100%",
+} = Astro.props as {
+    colors?: {
+        color1?: string;
+        color2?: string;
+        color3?: string;
+        color4?: string;
+        color5?: string;
+        color6?: string;
+        color7?: string;
+        color8?: string;
+        color9?: string;
+    };
     /** max probability at noise peaks, 0..1 (brightest parts) */
     maxProbabilityPeak?: number;
     /** min probability at noise peaks, 0..1 (shoulder of blobs) */
@@ -17,20 +44,7 @@ export interface Props {
     className?: string;
     width?: number | string;
     height?: number | string;
-}
-
-const {
-    foregroundColor = "#1e90ff",
-    backgroundColor = "#000000",
-    maxProbabilityPeak = 0.8,
-    minProbabilityPeak = 0.4,
-    maxProbabilityTrough = 0.02,
-    fieldSpeed = 0.15,
-    noiseScale = 2.5,
-    className,
-    width = "100%",
-    height = "100%",
-} = Astro.props;
+};
 
 const cssWidth = typeof width === "number" ? `${width}px` : width;
 const cssHeight = typeof height === "number" ? `${height}px` : height;
@@ -38,15 +52,16 @@ const cssHeight = typeof height === "number" ? `${height}px` : height;
 
 <div
         data-perlish-point-clouds
-        data-foreground-color={foregroundColor}
-        data-background-color={backgroundColor}
-        data-max-probability-peak={maxProbabilityPeak}
-        data-min-probability-peak={minProbabilityPeak}
-        data-max-probability-trough={maxProbabilityTrough}
-        data-field-speed={fieldSpeed}
-        data-noise-scale={noiseScale}
-        data-fixed-width={typeof width === "number" ? width : undefined}
-        data-fixed-height={typeof height === "number" ? height : undefined}
+        data-config={JSON.stringify({
+            colors,
+            maxProbabilityPeak,
+            minProbabilityPeak,
+            maxProbabilityTrough,
+            fieldSpeed,
+            noiseScale,
+            fixedWidth: width,
+            fixedHeight: height,
+        })}
         class={className}
         style={`width:${cssWidth};height:${cssHeight};display:block;position:relative;`}
 ></div>
@@ -66,52 +81,42 @@ const cssHeight = typeof height === "number" ? `${height}px` : height;
 
         container.dataset.perlishInitialized = "true";
 
-        const readNumber = (
-            value: string | undefined,
-            fallback: number,
-        ): number => {
+        const {
+            colors,
+            maxProbabilityPeak,
+            minProbabilityPeak,
+            maxProbabilityTrough,
+            fieldSpeed,
+            noiseScale,
+            fixedWidth,
+            fixedHeight,
+        } = JSON.parse(container.dataset.config!);
+
+        const readNumber = (value: string | undefined, fallback: number) => {
             const parsed = Number(value);
             return Number.isFinite(parsed) ? parsed : fallback;
         };
 
-        const foregroundColor =
-            container.dataset.foregroundColor ?? "#1e90ff";
+        console.log({
+            colors,
+            maxProbabilityPeak,
+            minProbabilityPeak,
+            maxProbabilityTrough,
+            fieldSpeed,
+            noiseScale,
+            fixedWidth,
+            fixedHeight,
+        })
 
-        const backgroundColor =
-            container.dataset.backgroundColor ?? "#000000";
-
-        const maxProbabilityPeak = readNumber(
-            container.dataset.maxProbabilityPeak,
-            0.8,
-        );
-
-        const minProbabilityPeak = readNumber(
-            container.dataset.minProbabilityPeak,
-            0.4,
-        );
-
-        const maxProbabilityTrough = readNumber(
-            container.dataset.maxProbabilityTrough,
-            0.02,
-        );
-
-        const fieldSpeed = readNumber(
-            container.dataset.fieldSpeed,
-            0.15,
-        );
-
-        const noiseScale = readNumber(
-            container.dataset.noiseScale,
-            2.5,
-        );
-
-        const fixedWidth = container.dataset.fixedWidth
-            ? Number(container.dataset.fixedWidth)
-            : undefined;
-
-        const fixedHeight = container.dataset.fixedHeight
-            ? Number(container.dataset.fixedHeight)
-            : undefined;
+        const color1 = colors.color1;
+        const color2 = colors.color2;
+        const color3 = colors.color3;
+        const color4 = colors.color4;
+        const color5 = colors.color5;
+        const color6 = colors.color6;
+        const color7 = colors.color7;
+        const color8 = colors.color8;
+        const color9 = colors.color9;
 
         const makeColorVec3 = (hex: string) => {
             const color = new THREE.Color(hex);
@@ -154,11 +159,32 @@ const cssHeight = typeof height === "number" ? `${height}px` : height;
                 resolution: {
                     value: new THREE.Vector2(1, 1),
                 },
-                foreground: {
-                    value: makeColorVec3(foregroundColor),
+                color1: {
+                    value: makeColorVec3(color1),
                 },
-                background: {
-                    value: makeColorVec3(backgroundColor),
+                color2: {
+                    value: makeColorVec3(color2),
+                },
+                color3: {
+                    value: makeColorVec3(color3),
+                },
+                color4: {
+                    value: makeColorVec3(color4),
+                },
+                color5: {
+                    value: makeColorVec3(color5),
+                },
+                color6: {
+                    value: makeColorVec3(color6),
+                },
+                color7: {
+                    value: makeColorVec3(color7),
+                },
+                color8: {
+                    value: makeColorVec3(color8),
+                },
+                color9: {
+                    value: makeColorVec3(color9),
                 },
                 maxProbPeak: {
                     value: maxProbabilityPeak,
@@ -178,35 +204,22 @@ const cssHeight = typeof height === "number" ? `${height}px` : height;
             },
 
             vertexShader: vertexShader,
-
             fragmentShader: fragmentShader,
         });
 
         material.toneMapped = false;
 
-        const mesh = new THREE.Mesh(
-            geometry,
-            material,
-        );
+        const mesh = new THREE.Mesh(geometry, material);
 
         scene.add(mesh);
 
         const resize = () => {
-            const width =
-                (fixedWidth ??
-                    container.clientWidth) ||
-                window.innerWidth;
+            const width = container.clientWidth || window.innerWidth;
+            const height = container.clientHeight || window.innerHeight;
 
-            const height =
-                (fixedHeight ??
-                    container.clientHeight) ||
-                window.innerHeight;
+            renderer.setPixelRatio(window.devicePixelRatio || 1);
 
-            renderer.setPixelRatio(
-                window.devicePixelRatio || 1,
-            );
-
-            // Increase this to 2 or 3 if you want
+            // Increase this to 2 or 3 if we want
             // a higher-resolution internal render.
             const scale = 1;
 
@@ -217,14 +230,9 @@ const cssHeight = typeof height === "number" ? `${height}px` : height;
             );
 
             // Keep the canvas at the normal CSS size.
-            renderer.domElement.style.width =
-                `${width}px`;
-
-            renderer.domElement.style.height =
-                `${height}px`;
-
-            renderer.domElement.style.imageRendering =
-                "pixelated";
+            renderer.domElement.style.width = `${width}px`;
+            renderer.domElement.style.height = `${height}px`;
+            renderer.domElement.style.imageRendering = "pixelated";
 
             // Use the actual drawing-buffer dimensions,
             // including devicePixelRatio.
@@ -236,39 +244,22 @@ const cssHeight = typeof height === "number" ? `${height}px` : height;
 
         resize();
 
-        window.addEventListener(
-            "resize",
-            resize,
-        );
+        window.addEventListener("resize", resize);
 
         const start = performance.now();
 
         const animate = (now: number) => {
-            const elapsed =
-                (now - start) / 1000;
-
-            material.uniforms.time.value =
-                elapsed;
-
-            renderer.render(
-                scene,
-                camera,
-            );
+            const elapsed = (now - start) / 1000;
+            material.uniforms.time.value = elapsed;
+            renderer.render(scene, camera);
         };
 
-        renderer.setAnimationLoop(
-            animate,
-        );
+        renderer.setAnimationLoop(animate);
 
         const cleanup = () => {
-            window.removeEventListener(
-                "resize",
-                resize,
-            );
+            window.removeEventListener("resize", resize);
 
-            renderer.setAnimationLoop(
-                null,
-            );
+            renderer.setAnimationLoop(null);
 
             geometry.dispose();
             material.dispose();
@@ -276,43 +267,24 @@ const cssHeight = typeof height === "number" ? `${height}px` : height;
 
             mesh.removeFromParent();
 
-            if (
-                renderer.domElement.parentNode ===
-                container
-            ) {
-                container.removeChild(
-                    renderer.domElement,
-                );
+            if (renderer.domElement.parentNode === container) {
+                container.removeChild(renderer.domElement);
             }
-
             delete container.dataset.perlishInitialized;
         };
 
         // Important if you're using Astro's client router /
         // View Transitions.
-        document.addEventListener(
-            "astro:before-swap",
-            cleanup,
-            {once: true},
-        );
+        document.addEventListener("astro:before-swap", cleanup, {once: true});
     }
 
     function initAllPerlishPointClouds() {
-        document
-            .querySelectorAll<HTMLElement>(
-                selector,
-            )
-            .forEach(
-                initPerlishPointClouds,
-            );
+        document.querySelectorAll<HTMLElement>(selector).forEach(initPerlishPointClouds);
     }
 
     // Standard page load.
     initAllPerlishPointClouds();
 
     // Supports pages loaded through Astro's client router.
-    document.addEventListener(
-        "astro:page-load",
-        initAllPerlishPointClouds,
-    );
+    document.addEventListener("astro:page-load", initAllPerlishPointClouds);
 </script>

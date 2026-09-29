@@ -11,20 +11,22 @@ const {
 } = Astro.props;
 
 const classes = [
-    "img-in",
     className,
 ].filter(Boolean).join(" ");
+
+const animation = "var(--fade-up-in-animation)";
+// const animTest = "fade-in 500ms ease";
 ---
-<>
+<div>
     <Image
         {...imageProps}
         class={classes}
         onload="this.classList.add('image-in')"
     />
-    <style>
-        .image-in {
-            opacity: 1;
-            animation: var(--fade-in-animation);
-        }
-    </style>
-</>
+</div>
+
+<style define:vars={{ animation }}>
+    :global(.image-in) {
+        animation: var(--animation);
+    }
+</style>

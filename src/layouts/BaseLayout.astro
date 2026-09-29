@@ -30,6 +30,7 @@ const {
     bodyStyle = "",
     htmlLang = "en",
     schema,
+    ...rest
 } = Astro.props as {
     title: string,
     description: string,
@@ -92,7 +93,7 @@ const isNoIndex = import.meta.env.PUBLIC_NOINDEX === "true";
     {schema !== undefined && <JsonLd data={schema} />}
     <slot name="head"/>
 </head>
-<body class={`${bodyClass} margin-0`} style={bodyStyle}>
+<body class={`${bodyClass} margin-0`} style={bodyStyle} {...rest}>
 <slot/>
 <!--<script src="../domain/analytics/analytics-events.ts"></script>-->
 </body>

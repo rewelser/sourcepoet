@@ -14,19 +14,19 @@ import Footer from "../components/footer/Footer.astro";
 const {
     title,
     description,
+    bodyClass = "",
     ogImage,
     isHome = false,
     preloadImage,
-    pageTheme = "default",
     schema,
     ...rest
 } = Astro.props as {
     title: string,
     description: string,
+    bodyClass: string,
     ogImage: string,
     isHome: boolean,
     preloadImage: boolean,
-    pageTheme: string,
     schema?: unknown
 };
 // import "@fontsource/fleur-de-leah";
@@ -37,7 +37,7 @@ const {
 ---
 
 <BaseLayout title={title} description={description} ogImage={ogImage} preloadImage={preloadImage}
-            bodyClass={`min-h-screen text-neutral-800 font-[Spectral] bg-black relative ${!isHome ? "promo-bar-offset promo-bar-transitions" : ""}`}
+            bodyClass={`${bodyClass} min-h-screen text-neutral-800 font-[Spectral] relative ${!isHome ? "promo-bar-offset promo-bar-transitions" : ""}`}
             {...rest}>
     <Fragment slot="head">
         <!-- <ClientRouter /> {/* enable SPA-style navigation */} -->
@@ -56,9 +56,9 @@ const {
     <!--        defaults={defaults}-->
     <!--        site={site}-->
     <!--/>-->
-    <Header />
+    <!--<Header />-->
     <main class="mx-auto">
-        <div id="pagecontent-wrap" data-color-theme={pageTheme}>
+        <div id="pagecontent-wrap">
             <slot/>
             {/* page content goes here */}
         </div>

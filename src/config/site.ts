@@ -1,8 +1,35 @@
 import {getCmsFileEntry} from "@sourcepoetry/astro-sveltia/content";
 import {cmsConfig} from "../cms/config.ts";
-import defaultLogo from "./assets/paper1.jpg";
+import logoDefault from "./assets/generic-logo.svg";
+import personProfilePictureDefault from "./assets/default-profile-picture.jpg";
+import personPortraitPictureDefault from "./assets/default-portrait-picture.svg";
+import teamPictureDefault from "./assets/default-team-picture.jpg";
 import type {MergeDefined} from "./types.ts";
 
+
+/**
+ * A branding shape with hero sub-object may be something like (Based off of BluTattoo):
+ *
+ * {
+ *   logoDefault,
+ *   sitewideOGPhoto: "./public/uploads/ogimages/default_sitewide_og.jpg",
+ *   hero: {
+ *     video: {
+ *       videoMobile: "/uploads/misc_videos/hero-mobile.webm",
+ *       videoDesktop: "/uploads/misc_videos/hero_desktop.webm",
+ *       posterMobile,
+ *       posterDesktop
+ *     },
+ *     picture: {
+ *         heroPicture,
+ *         heroPictureAltText: "hero picture alt text"
+ *     }
+ *   }
+ * }
+ *
+ * But this doesn't have to exist as a default, and in fact probably shouldn't, since not all websites/pages
+ * may have a need for this structure, but I'm putting this here as a guide.
+ */
 const defaults = {
     info: {
         siteName: "Company Name",
@@ -23,8 +50,13 @@ const defaults = {
         socials: {},
     },
     branding: {
-        logoDefault: defaultLogo,
+        logoDefault,
         ogImageDefault: "./public/uploads/ogimages/default_sitewide_og.jpg"
+    },
+    team: {
+        personProfilePictureDefault,
+        personPortraitPictureDefault,
+        teamPictureDefault,
     }
 }
 
