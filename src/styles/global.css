@@ -1,9 +1,10 @@
 @import "tailwindcss";
 @import "./themes.css";
+@import "./prose.css";
 
-/*@view-transition {*/
-/*    navigation: auto;*/
-/*}*/
+@view-transition {
+    navigation: auto;
+}
 
 :root [data-color-theme] {
     --promo-bar-h: 0px;
@@ -26,7 +27,8 @@
 
     /* colors */
     /*color-scheme: light dark;*/
-    color-scheme: light;
+    /*color-scheme: light;*/
+    /*color-scheme: dark;*/
     /*--background-color-light: ivory;*/
     /*--background-color-dark: oklch(0.2471 0.0185 34.94);*/
     /*--background-color: light-dark(var(--background-color-light), var(--background-color-dark));*/
@@ -124,6 +126,14 @@
     /*font-weight: 100 900;*/
     /*font-style: normal;*/
     /*font-display: swap;*/
+}
+
+@font-face {
+    font-family: "CL Antique 48";
+    src: url("../domain/fonts/assets/CL_Antique_48.woff2") format("woff2");
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
 }
 
 /** MISC **/

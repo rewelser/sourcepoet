@@ -1,15 +1,10 @@
 ---
 const {
     colors = {
-        color1: "#fffff0",
-        color2: "#efefe2",
-        color3: "#dfdfd4",
-        color4: "#cfcfc6",
-        color5: "#c0c0b8",
-        color6: "#b0b0aa",
-        color7: "#a0a09c",
-        color8: "#90908e",
-        color9: "#808080",
+        foregroundLightScheme: "#fffff0",
+        backgroundLightScheme: "#808080",
+        foregroundDarkScheme: "#fffff0",
+        backgroundDarkScheme: "#808080",
     },
     maxProbabilityPeak = 0.8,
     minProbabilityPeak = 0.4,
@@ -21,15 +16,10 @@ const {
     height = "100%",
 } = Astro.props as {
     colors?: {
-        color1?: string;
-        color2?: string;
-        color3?: string;
-        color4?: string;
-        color5?: string;
-        color6?: string;
-        color7?: string;
-        color8?: string;
-        color9?: string;
+        foregroundLightScheme?: string;
+        backgroundLightScheme?: string;
+        foregroundDarkScheme?: string;
+        backgroundDarkScheme?: string;
     };
     /** max probability at noise peaks, 0..1 (brightest parts) */
     maxProbabilityPeak?: number;
@@ -88,35 +78,22 @@ const cssHeight = typeof height === "number" ? `${height}px` : height;
             maxProbabilityTrough,
             fieldSpeed,
             noiseScale,
-            fixedWidth,
-            fixedHeight,
         } = JSON.parse(container.dataset.config!);
 
-        const readNumber = (value: string | undefined, fallback: number) => {
-            const parsed = Number(value);
-            return Number.isFinite(parsed) ? parsed : fallback;
-        };
+        let foreground, background;
+        const probe = document.querySelector(".color-scheme-probe");
+        const color = getComputedStyle(probe).color;
+        let colorScheme = color === "rgb(0, 0, 0)"
+            ? "dark"
+            : "light";
 
-        console.log({
-            colors,
-            maxProbabilityPeak,
-            minProbabilityPeak,
-            maxProbabilityTrough,
-            fieldSpeed,
-            noiseScale,
-            fixedWidth,
-            fixedHeight,
-        })
-
-        const color1 = colors.color1;
-        const color2 = colors.color2;
-        const color3 = colors.color3;
-        const color4 = colors.color4;
-        const color5 = colors.color5;
-        const color6 = colors.color6;
-        const color7 = colors.color7;
-        const color8 = colors.color8;
-        const color9 = colors.color9;
+        if (colorScheme === "dark") {
+            foreground = colors.foregroundDarkScheme;
+            background = colors.backgroundDarkScheme;
+        } else {
+            foreground = colors.foregroundLightScheme;
+            background = colors.backgroundLightScheme;
+        }
 
         const makeColorVec3 = (hex: string) => {
             const color = new THREE.Color(hex);
@@ -159,32 +136,11 @@ const cssHeight = typeof height === "number" ? `${height}px` : height;
                 resolution: {
                     value: new THREE.Vector2(1, 1),
                 },
-                color1: {
-                    value: makeColorVec3(color1),
+                foreground: {
+                    value: makeColorVec3(foreground),
                 },
-                color2: {
-                    value: makeColorVec3(color2),
-                },
-                color3: {
-                    value: makeColorVec3(color3),
-                },
-                color4: {
-                    value: makeColorVec3(color4),
-                },
-                color5: {
-                    value: makeColorVec3(color5),
-                },
-                color6: {
-                    value: makeColorVec3(color6),
-                },
-                color7: {
-                    value: makeColorVec3(color7),
-                },
-                color8: {
-                    value: makeColorVec3(color8),
-                },
-                color9: {
-                    value: makeColorVec3(color9),
+                background: {
+                    value: makeColorVec3(background),
                 },
                 maxProbPeak: {
                     value: maxProbabilityPeak,

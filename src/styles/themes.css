@@ -1,9 +1,104 @@
 /* Shared behavior for every color theme */
 [data-color-theme] {
+    /*color-scheme: light dark;*/
+    color-scheme: light;
+    /*color-scheme: dark;*/
+
     --color-placeholder: #6b7280;
     --color-disuse: #ccc;
-    --color-muted: oklch(from var(--color-text) l c h / 0.8);
-    --color-muted-more: oklch(from var(--color-text) l c h / 0.6);
+    /*--color-muted: oklch(from var(--color-text) l c h / 0.8);*/
+
+    --color-text-light: oklch(0.20 0.005 0);
+    --color-text-dark: oklch(0.94 0.005 0);
+
+    --color-text-muted-light: oklch(0.42 0.005 0);
+    --color-text-muted-dark: oklch(0.72 0.005 0);
+
+    --color-text-muted-more-light: oklch(0.56 0.004 0);
+    --color-text-muted-more-dark: oklch(0.58 0.004 0);
+
+    --color-surface-light: oklch(0.97 0.004 0);
+    --color-surface-dark: oklch(0.24 0.004 0);
+
+    --color-surface-2-light: oklch(0.92 0.004 0);
+    --color-surface-2-dark: oklch(0.19 0.004 0);
+
+    --color-accent-light: oklch(0.80 0.005 0);
+    --color-accent-dark: oklch(0.48 0.005 0);
+
+    --color-text: light-dark(var(--color-text-light), var(--color-text-dark));
+    --color-text-muted: light-dark(var(--color-text-muted-light), var(--color-text-muted-dark));
+    --color-text-muted-more: light-dark(var(--color-text-muted-more-light), var(--color-text-muted-more-dark));
+    --color-headings: var(--color-text);
+    --color-headings-extruded: var(--color-headings);
+    --color-lead: var(--color-text);
+    --color-links: var(--color-text);
+    --color-bold: var(--color-headings);
+    --color-counters: var(--color-text);
+    --color-bullets: var(--color-text);
+    --color-hr: var(--color-text);
+    --color-quotes: var(--color-text);
+    --color-quote-borders: var(--color-text);
+    --color-captions: var(--color-text);
+    --color-code: var(--color-text);
+    --color-pre-code: var(--color-code);
+
+    &.theme-light-theme-override,
+    & .theme-light-theme-override {
+        /*--color-text: var(--color-text-light);*/
+        /*--color-text-muted: var(--color-text-muted-light);*/
+        /*--color-text-muted-more: var(--color-text-muted-more-light);*/
+        /*--color-headings: var(--color-text);*/
+        /*--color-headings-extruded: var(--color-headings);*/
+        /*--color-lead: var(--color-text);*/
+        /*--color-links: var(--color-text);*/
+        /*--color-bold: var(--color-headings);*/
+        /*--color-counters: var(--color-text);*/
+        /*--color-bullets: var(--color-text);*/
+        /*--color-hr: var(--color-text);*/
+        /*--color-quotes: var(--color-text);*/
+        /*--color-quote-borders: var(--color-text);*/
+        /*--color-captions: var(--color-text);*/
+        /*--color-code: var(--color-text);*/
+        /*--color-pre-code: var(--color-code);*/
+
+        color-scheme: light;
+    }
+
+    &.theme-dark-theme-override,
+    & .theme-dark-theme-override {
+        /*--color-text: var(--color-text-dark);*/
+        /*--color-text-muted: var(--color-text-muted-dark);*/
+        /*--color-text-muted-more: var(--color-text-muted-more-dark);*/
+        /*--color-headings: var(--color-text);*/
+        /*--color-headings-extruded: var(--color-headings);*/
+        /*--color-lead: var(--color-text);*/
+        /*--color-links: var(--color-text);*/
+        /*--color-bold: var(--color-headings);*/
+        /*--color-counters: var(--color-text);*/
+        /*--color-bullets: var(--color-text);*/
+        /*--color-hr: var(--color-text);*/
+        /*--color-quotes: var(--color-text);*/
+        /*--color-quote-borders: var(--color-text);*/
+        /*--color-captions: var(--color-text);*/
+        /*--color-code: var(--color-text);*/
+        /*--color-pre-code: var(--color-code);*/
+
+        color-scheme: dark;
+    }
+
+    --color-surface: light-dark(var(--color-surface-light), var(--color-surface-dark));
+    --color-surface-2: light-dark(var(--color-surface-2-light), var(--color-surface-2-dark));
+    --color-accent: light-dark(var(--color-accent-light), var(--color-accent-dark));
+    --color-edge: var(--color-accent);
+    --color-pre-bg: var(--color-surface-2);
+    --color-th-borders: var(--color-edge);
+    --color-td-borders: var(--color-edge);
+    --color-table-heading-bg: var(--color-surface-2);
+
+    /*--color-text-muted: oklch(from var(--color-text) l c h / 0.8);*/
+    /*--color-text-muted-more: oklch(from var(--color-text) l c h / 0.6);*/
+    --color-logo: var(--color-text);
 
     --button-hover-background: var(--color-use);
     --button-hover-color: var(--color-edge);
@@ -18,20 +113,20 @@
     color: var(--color-text);
     border-color: var(--color-edge);
 
-    & :where(h1, h2, h3, h4) {
+    & :where(h1, h2, h3, h4, h5, h6) {
         color: var(--color-headings);
     }
 
-    & :where(h2, h3, h4, h5).theme-extruded {
+    & :where(h1, h2, h3, h4, h5, h6).theme-extruded {
         color: var(--color-headings-extruded);
     }
 
     & .theme-muted {
-        color: var(--color-muted);
+        color: var(--color-text-muted);
     }
 
     & .theme-muted-more {
-        color: var(--color-muted-more);
+        color: var(--color-text-muted-more);
     }
 
     .lead {
@@ -164,46 +259,44 @@
             color: var(--toggle-label-color);
         }
     }
+
+    /** Extras **/
+
+    &[data-color-theme-surface-pattern="dotgrid"] {
+        /*background-image: radial-gradient(*/
+        /*        circle,*/
+        /*        var(--color-accent) 1px,*/
+        /*        var(--color-surface) 1px*/
+        /*);*/
+        background-image: radial-gradient(
+                circle,
+                color-mix(in srgb, var(--color-accent), #000 25%) 1px,
+                var(--color-surface) 1px
+        );
+        background-size: 20px 20px;
+    }
 }
 
 [data-color-theme="paper"] {
-    --color-surface: light-dark(ivory, oklch(0.2471 0.0185 34.94));
-    /*--color-surface: white;*/
-    --color-surface-2: light-dark(#eeeade, oklch(0.20 0.015 35));
-    --color-accent: light-dark(lightgray, oklch(0.4849 0.0185 34.94));
-    /*--color-accent: black;*/
-    --color-edge: var(--color-accent);
+    --color-surface-light: ivory;
+    --color-surface-dark: oklch(0.2471 0.0185 34.94);
+    --color-surface-2-light: #eeeade;
+    --color-surface-2-dark: oklch(0.20 0.015 35);
+    --color-accent-light: lightgray;
+    --color-accent-dark: oklch(0.4849 0.0185 34.94);
+
     --color-use: #dbeafe;
     --color-use-affirmative: oklch(97.9% 0.021 166.113);
     --color-use-affirmative-select: oklch(95% 0.052 163.051);
 
     /** TYPOGRAPHY **/
-    --color-text: light-dark(black, white);
-    --color-headings: var(--color-text, light-dark(black, white));
-    --color-headings-extruded: var(--color-headings, light-dark(black, white));
-    --color-lead: var(--color-text, light-dark(black, white));
-    --color-links: var(--color-text, light-dark(black, white));
-    --color-bold: var(--color-headings, light-dark(black, white));
-    --color-counters: var(--color-text, light-dark(black, white));
-    --color-bullets: var(--color-text, light-dark(black, white));
-    --color-hr: var(--color-text, light-dark(black, white));
-    --color-quotes: var(--color-text, light-dark(black, white));
-    --color-quote-borders: var(--color-text, light-dark(black, white));
-    --color-captions: var(--color-text, light-dark(black, white));
-    --color-code: var(--color-text, light-dark(black, white));
-    --color-pre-code: var(--color-code, light-dark(black, white));
-    --color-pre-bg: var(--color-surface-2, light-dark(black, white));
-    --color-th-borders: var(--color-code, light-dark(black, white));
-    --color-td-borders: var(--color-edge, light-dark(black, white));
-    --color-table-heading-bg: var(--color-surface-2, light-dark(black, white));
-    --color-logo: light-dark(crimson, oldlace);
+    /*--color-text: light-dark(black, oldlace);*/
+    --color-text-light: oklch(0.22 0.015 70);
+    --color-text-dark: oklch(0.92 0.015 70);
+    --color-text-muted-light: oklch(0.42 0.015 35);
+    --color-text-muted-dark: oklch(0.72 0.015 35);
+    --color-text-muted-more-light: oklch(0.56 0.012 35);
+    --color-text-muted-more-dark: oklch(0.58 0.012 35);
 
-    &[data-color-theme-surface-pattern="dotgrid"] {
-        background-image: radial-gradient(
-                circle,
-                var(--color-accent) 1px,
-                var(--color-surface) 1px
-        );
-        background-size: 20px 20px;
-    }
+    --color-logo: light-dark(crimson, oldlace);
 }

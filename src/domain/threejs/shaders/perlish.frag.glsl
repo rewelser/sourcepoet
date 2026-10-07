@@ -1,17 +1,7 @@
         uniform float time;
         uniform vec2 resolution;
-        //uniform vec3 foreground;
-        //uniform vec3 background;
-        uniform vec3 color1;
-        uniform vec3 color2;
-        uniform vec3 color3;
-        uniform vec3 color4;
-        uniform vec3 color5;
-        uniform vec3 color6;
-        uniform vec3 color7;
-        uniform vec3 color8;
-        uniform vec3 color9;
-        uniform vec3 color10;
+        uniform vec3 foreground;
+        uniform vec3 background;
         uniform float maxProbPeak;
         uniform float minProbPeak;
         uniform float maxProbTrough;
@@ -88,14 +78,6 @@
                                         dot(p2,x2), dot(p3,x3) ) );
         }
 
-        // better per-pixel hash
-        float hash21(vec2 p) {
-          p = floor(p);
-          vec3 p3 = fract(vec3(p.xyx) * 0.1031);
-          p3 += dot(p3, p3.yzx + 33.33);
-          return fract((p3.x + p3.y) * p3.z);
-        }
-
         void main() {
           vec2 uv = gl_FragCoord.xy / resolution.xy;
 
@@ -104,74 +86,27 @@
           float field = mix(f1, f2, 0.35);
           field = (field + 1.0) * 0.5; // 0..1
 
-          // first, keep a dead-ish low zone
-          // how fast we leave trough
-          // float mid  = smoothstep(0.0, 0.4, field);
-          // float mid  = smoothstep(0.0, 0.6, field);
-          float mid  = smoothstep(0.0, 0.7, field);
-          // how fast we enter peak
-          // float high = smoothstep(0.6, 1.0, field);
-          // float high = smoothstep(0.45, 0.85, field);
-          // float nearHigh = smoothstep(0.25, 0.5, field); // lower than high
-          float high = smoothstep(0.35, 0.7, field);
+          float spacing = .05;
+          spacing = .02;
 
-          // ---- calm band near the top ----
-          // - bottom -> keep prob, top -> push prob toward trough
-          // - uv.y: 0.0 = bottom, 2.0 = top (for when renderer resolution is calced based off of css and not dpr (dpr = 2))
-          // float calmMask = smoothstep(1.2, 1.8, uv.y);
-          // float calmMask = step(0.99, uv.y); // hard cutoff
+          float nearestThreshold = floor(field / spacing + 0.5) * spacing;
+          //float dist = abs(field - nearestThreshold);
+          float contour = fract(field / spacing);
+          float dist = min(contour, 1.0 - contour) * spacing;
 
-          // - uv.y: 0.0 = bottom, 1.0 = top (for when renderer resolution is calced based off dpr (dpr = 2))
-          float calmMask = smoothstep(0.3, 0.9, uv.y);
+          float width = fwidth(field);
+          float thickness = 1.5;
+          //thickness = 2.0;
+          thickness = 1.0;
+          thickness = 0.5;
+          thickness = 1.0;
 
-          // start from trough
-          float prob = maxProbTrough;
-          // add some mid-range (shoulder)
-          prob = mix(prob, minProbPeak, mid);
-          // prob = mix(prob, maxProbPeak * 0.9, nearHigh); // almost peak
-          // then add the real peak (core)
-          prob = mix(prob, maxProbPeak, high);
-
-          // ---- update prob per calm band ----
-          prob = mix(prob, maxProbTrough, calmMask);
-          // At bottom: prob ~ original
-          // At top: prob ~ maxProbTrough (very low), so mostly background pixels
-
-          // --- original color calc: per-pixel random ----
-          float r = hash21(gl_FragCoord.xy);
-          //// vec3 color = (r < prob) ? foreground : background;
-
-
-          // ---- other ways of calculating color ----
-          // - clamps prob; same value in R,G,B → grayscale
-          // float v = clamp(prob, 0.0, 1.0);
-          // vec3 color = vec3(v);
-          // - splits scene x-wise (or y-wise, if using y)
-          // float r = gl_FragCoord.x / resolution.x;
-          // vec3 color = (r < prob) ? foreground : background;
-          // -- considerations for other pages --
-          // float threshold = 0.5; // tweak this as you like
-           float threshold1 = .10;
-           float threshold2 = .20;
-           float threshold3 = .30;
-           float threshold4 = .40;
-           float threshold5 = .50;
-           float threshold6 = .60;
-           float threshold7 = .70;
-           float threshold8 = .80;
-          // - non-randomized, doesn't account for prob
-          vec3 color =
-            field < .10 ? color1 :
-            field < .20 ? color2 :
-            field < .30 ? color3 :
-            field < .40 ? color4 :
-            field < .50 ? color5 :
-            field < .60 ? color6 :
-            field < .70 ? color7 :
-            field < .80 ? color8 :
-                          color9;
-          // - non-randomized, accounts for prob
-          // vec3 color = (prob > threshold) ? foreground : background;
+          float line = 1.0 - smoothstep(0.0, width * thickness, dist);
+          line = 1.0 - step(width * thickness, dist);
+          float contourT = clamp(nearestThreshold, 0.0, 1.0);
+          vec3 contourColor = mix(foreground, background, contourT);
+          //vec3 color = mix(foreground, background, line);
+          vec3 color = mix(background, contourColor, line);
 
           // force-encode to sRGB so it matches hex
           color = pow(color, vec3(1.0 / 2.2));
